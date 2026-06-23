@@ -1,0 +1,4142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Activity Report — Electrical PHE ONWJ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,700;1,400&family=Source+Sans+3:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+  :root {
+    --ink: #14181c;
+    --paper: #f6f4ef;
+    --card: #ffffff;
+    --rule: #d9d4c8;
+    --primary: #b3261e;
+    --primary-deep: #7e1812;
+    --steel: #2c4a5e;
+    --steel-light: #5c7c8f;
+    --amber: #c47f17;
+    --green: #2f7a4f;
+    --green-bg: #e6f2ea;
+    --amber-bg: #fbf0dd;
+    --red-bg: #fbe6e4;
+    --gray-bg: #eceae3;
+    --muted: #6b6457;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+    padding-bottom: 60px;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ═══ HEADER ═══ */
+  .topbar {
+    background: var(--ink);
+    color: #fff;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.25);
+  }
+  .topbar-inner {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand-mark {
+    width: 38px; height: 38px;
+    border: 2px solid var(--primary);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Libre Baskerville', serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+  .brand-text h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 17px;
+    letter-spacing: 0.3px;
+  }
+  .brand-text .sub {
+    font-size: 11px;
+    color: #aab0b6;
+    margin-top: 1px;
+  }
+  .topbar-meta {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 11.5px;
+    color: #c7ccd1;
+  }
+  .topbar-meta .updated {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .dot-live {
+    width: 7px; height: 7px;
+    background: #4caf50;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(76,175,80,.25);
+  }
+
+  /* ═══ ACTION BAR ═══ */
+  .actionbar {
+    background: #fff;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 67px;
+    z-index: 90;
+  }
+  .actionbar-inner {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 10px 28px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform .12s, box-shadow .12s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 2px 8px rgba(179,38,30,.3); }
+  .btn-steel   { background: var(--steel); color: #fff; box-shadow: 0 2px 8px rgba(44,74,94,.3); }
+  .btn-outline { background: #fff; color: var(--ink); border: 1.5px solid var(--rule); }
+  .btn-outline:hover { border-color: var(--ink); }
+  .btn-ghost   { background: transparent; color: var(--muted); border: 1px dashed var(--rule); }
+  .spacer { flex: 1; }
+  .save-toast {
+    font-size: 11.5px; font-weight: 700; color: var(--green);
+    display: none; align-items: center; gap: 5px;
+  }
+
+  /* ═══ LAYOUT ═══ */
+  .wrap { max-width: 1800px; margin: 0 auto; padding: 24px 24px 0; }
+
+  /* ═══ SUMMARY STRIP ═══ */
+  .summary-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 26px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .stat-card.c-total::before { background: var(--steel); }
+  .stat-card.c-complete::before { background: var(--green); }
+  .stat-card.c-inprogress::before { background: var(--amber); }
+  .stat-card.c-cancel::before { background: var(--primary); }
+  .stat-card.c-afh::before { background: #8e44ad; }
+  .stat-num {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* ═══ SECTION HEADER ═══ */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .section-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .idx {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #fff;
+    background: var(--ink);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .section-sub { font-size: 12px; color: var(--muted); }
+
+  /* ═══ CREW CHANGE GROUP ═══ */
+  .crew-group {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    margin-bottom: 22px;
+    overflow: visible;
+  }
+  .crew-group-header {
+    background: linear-gradient(135deg, var(--steel) 0%, #1f3a4a 100%);
+    color: #fff;
+    padding: 13px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-radius: 10px 10px 0 0;
+  }
+  .crew-group-header .title-block { display: flex; align-items: center; gap: 10px; }
+  .crew-group-header h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 14.5px;
+    letter-spacing: 0.2px;
+  }
+  .crew-group-header input.cg-title {
+    background: rgba(255,255,255,.12);
+    border: 1px dashed rgba(255,255,255,.4);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14.5px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    min-width: 280px;
+  }
+  .crew-group-header input.cg-title::placeholder { color: rgba(255,255,255,.5); }
+  .crew-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    background: rgba(255,255,255,.15);
+    border: none;
+    color: #fff;
+    width: 28px; height: 28px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,.28); }
+  .icon-btn.danger:hover { background: var(--primary); }
+
+  /* ═══ ACTIVITY TABLE ═══ */
+  .table-scroll { overflow-x: auto; }
+  table.activity-table {
+    width: 100%;
+    min-width: 1280px;
+    border-collapse: collapse;
+    font-size: 12px;
+    table-layout: auto;
+  }
+  @media (min-width: 1500px) {
+    table.activity-table {
+      table-layout: fixed;
+      min-width: 0;
+    }
+    .activity-table col.col-no          { width: 2.5%; }
+    .activity-table col.col-planunplan  { width: 6%; }
+    .activity-table col.col-group       { width: 7%; }
+    .activity-table col.col-description { width: 23%; }
+    .activity-table col.col-station     { width: 8%; }
+    .activity-table col.col-duration    { width: 4.5%; }
+    .activity-table col.col-start       { width: 8%; }
+    .activity-table col.col-finish      { width: 8%; }
+    .activity-table col.col-progress    { width: 9%; }
+    .activity-table col.col-status      { width: 7%; }
+    .activity-table col.col-pax         { width: 3%; }
+    .activity-table col.col-personel    { width: 9.5%; }
+    .activity-table col.col-remarks     { width: 9%; }
+    .activity-table col.col-del         { width: 2.5%; }
+  }
+  .activity-table thead th {
+    background: #eef1f3;
+    color: var(--ink);
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 9px 10px;
+    text-align: left;
+    border-bottom: 2px solid var(--rule);
+    white-space: nowrap;
+  }
+  .activity-table tbody td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #ece9e1;
+    vertical-align: top;
+    overflow: hidden;
+  }
+  .activity-table tbody tr:hover { background: #fbfaf7; }
+  .activity-table tbody tr:last-child td { border-bottom: none; }
+  .cell-input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+  .cell-input:focus { background: #fff8e8; outline: 1px solid #e8d090; }
+  textarea.cell-input {
+    resize: vertical;
+    min-height: 32px;
+    line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  .cell-input.num { text-align: center; }
+  .cell-input.center { text-align: center; }
+
+  /* Station select dropdown */
+  select.cell-input {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23888'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 16px;
+  }
+
+  /* Date input styling */
+  input[type="date"].cell-input {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  input[type="date"].cell-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: .55;
+  }
+  input[type="date"].cell-input::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+
+  /* Duration auto-calculated, read-only look */
+  .duration-display {
+    text-align: center;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--steel);
+    background: #eef3f5;
+    border-radius: 4px;
+    padding: 4px 2px;
+  }
+
+  .status-select {
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 6px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .status-Complete   { background: var(--green-bg); color: var(--green); }
+  .status-Inprogress { background: var(--amber-bg); color: var(--amber); }
+  .status-Cancel     { background: var(--red-bg); color: var(--primary); }
+  .status-Plan       { background: var(--gray-bg); color: var(--muted); }
+
+  .progress-wrap { display: flex; align-items: center; gap: 6px; }
+  .progress-track {
+    flex: 1; height: 7px; background: #e6e2d8; border-radius: 4px; overflow: hidden; min-width: 50px;
+  }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 4px; transition: width .3s; }
+  .progress-pct-input {
+    width: 38px; font-size: 11px; text-align: right; border: none; background: transparent; font-family: inherit;
+  }
+
+  .row-del-btn {
+    background: var(--red-bg);
+    color: var(--primary);
+    border: none;
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .row-del-btn:hover { background: var(--primary); color: #fff; }
+
+  .add-row-bar {
+    padding: 10px 16px;
+    border-top: 1px dashed var(--rule);
+  }
+  .btn-add-row {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--steel);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .btn-add-row:hover { text-decoration: underline; }
+
+  /* ═══ CONCERN / AFH SECTION ═══ */
+  .afh-banner {
+    background: linear-gradient(135deg, #3a1414 0%, var(--primary-deep) 100%);
+    border-radius: 10px 10px 0 0;
+    padding: 14px 20px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .afh-banner .title-block { display: flex; align-items: center; gap: 10px; }
+  .afh-icon {
+    width: 30px; height: 30px;
+    background: rgba(255,255,255,.15);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+  .afh-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 14px;
+    padding: 18px;
+  }
+  .afh-card {
+    background: #fffaf8;
+    border: 1.5px solid #f0d8d4;
+    border-radius: 8px;
+    padding: 14px;
+    position: relative;
+  }
+  .afh-card.severity-high   { border-left: 4px solid var(--primary); }
+  .afh-card.severity-medium { border-left: 4px solid var(--amber); }
+  .afh-card.severity-low    { border-left: 4px solid var(--steel-light); }
+
+  .afh-card-top {
+    display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px;
+  }
+  .afh-badge-select {
+    font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; border: none;
+    font-family: inherit; cursor: pointer; appearance: none; -webkit-appearance: none; text-align:center;
+  }
+  .sev-high   { background: var(--red-bg); color: var(--primary); }
+  .sev-medium { background: var(--amber-bg); color: var(--amber); }
+  .sev-low    { background: #e8eef2; color: var(--steel); }
+
+  .afh-field-label {
+    font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); font-weight: 700; margin: 8px 0 3px;
+  }
+  .afh-input, .afh-textarea {
+    width: 100%; border: 1px solid #ecddd9; border-radius: 5px; padding: 6px 8px;
+    font-family: inherit; font-size: 12px; background: #fff;
+  }
+  .afh-textarea { resize: vertical; min-height: 50px; line-height: 1.45; }
+  .afh-input:focus, .afh-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(179,38,30,.12); }
+
+  /* ── Multi-photo zone ── */
+  .afh-photo-zone {
+    margin-top: 10px;
+    border: 1.5px dashed #e0c8c2;
+    border-radius: 6px;
+    padding: 8px;
+    background: #fffdfc;
+  }
+  .afh-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .afh-photo-item {
+    position: relative;
+    border: 1px solid #f0d8d4;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .afh-photo-item img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    display: block;
+  }
+  .afh-photo-caption {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #f0d8d4;
+    background: #fff;
+    font-size: 10px;
+    padding: 4px 6px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    color: var(--ink);
+    line-height: 1.3;
+    min-height: 28px;
+  }
+  .afh-photo-caption:focus { background: #fff8f5; }
+  .afh-photo-del {
+    position: absolute;
+    top: 4px; right: 4px;
+    background: rgba(192,57,43,0.85);
+    color: #fff;
+    border: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .afh-photo-del:hover { background: var(--primary); }
+  .afh-upload-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    padding: 6px 10px;
+    width: 100%;
+    justify-content: center;
+  }
+  .afh-upload-label input { display: none; }
+  .afh-photo-count {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: right;
+    margin-bottom: 4px;
+  }
+  .afh-mini-btn {
+    font-size: 10px; padding: 3px 9px; border-radius: 4px; border: 1px solid var(--rule);
+    background: #fff; cursor: pointer; font-family: inherit;
+  }
+
+  .afh-card-footer {
+    display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f3e6e3;
+  }
+  .afh-del { background: none; border: none; color: var(--muted); font-size: 11px; cursor: pointer; }
+  .afh-del:hover { color: var(--primary); }
+  .afh-status-badge {
+    font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 10px; border: none; cursor: pointer;
+    font-family: inherit; appearance: none; -webkit-appearance: none;
+  }
+  .stOpen   { background: var(--red-bg); color: var(--primary); }
+  .stFollow { background: var(--amber-bg); color: var(--amber); }
+  .stClosed { background: var(--green-bg); color: var(--green); }
+
+  .afh-empty {
+    text-align: center;
+    padding: 36px 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .afh-add-card {
+    border: 2px dashed #e8d4d0;
+    border-radius: 8px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 30px 14px;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 12.5px;
+    min-height: 180px;
+  }
+  .afh-add-card:hover { background: #fff8f7; border-color: var(--primary); }
+  .afh-add-card .plus-circle {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--red-bg);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+
+  /* ═══ FOOTER ═══ */
+  .report-footer {
+    max-width: 1800px; margin: 30px auto 0; padding: 16px 24px;
+    border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between; font-size: 11px; color: var(--muted);
+    flex-wrap: wrap; gap: 6px;
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 900px) {
+    .summary-strip { grid-template-columns: repeat(2, 1fr); }
+    .topbar-inner { padding: 12px 16px; }
+    .wrap { padding: 18px 16px 0; }
+    .actionbar-inner { padding: 8px 16px; }
+  }
+
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 8mm;
+    }
+
+    /* Hide all interactive/UI-only elements */
+    .actionbar, .btn, .icon-btn, .row-del-btn, .btn-add-row,
+    .afh-add-card, .afh-mini-btn, .afh-upload-label,
+    .save-toast, #print-tip { display: none !important; }
+
+    /* Always show every AFH card on print/PDF, even if hidden by the Closed toggle */
+    .afh-card { display: block !important; }
+    #afhAllClosedMsg { display: none !important; }
+
+    html, body {
+      background: #fff !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-size: 9pt !important;
+    }
+
+    .topbar { position: static !important; box-shadow: none !important; background: var(--ink) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .topbar-meta select { display: none !important; }
+
+    .wrap { max-width: 100% !important; padding: 6mm 0 0 !important; }
+
+    /* Force colors to print */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    /* Summary strip: keep compact */
+    .summary-strip { grid-template-columns: repeat(5, 1fr) !important; gap: 6pt !important; margin-bottom: 10pt !important; }
+    .stat-card { padding: 8pt 10pt !important; }
+    .stat-num { font-size: 18pt !important; }
+    .stat-label { font-size: 7pt !important; }
+
+    .section-title { font-size: 13pt !important; }
+    .section-head { margin-bottom: 8pt !important; }
+
+    /* Crew group: no page-break inside header */
+    .crew-group { break-inside: avoid-page; page-break-inside: avoid; margin-bottom: 10pt !important; border-radius: 4pt !important; }
+    .crew-group-header { padding: 6pt 10pt !important; }
+    .crew-group-header h3, .cg-title { font-size: 10.5pt !important; }
+    input.cg-title {
+      background: transparent !important;
+      border: none !important;
+      color: #fff !important;
+      min-width: 0 !important;
+      width: auto !important;
+    }
+
+    /* ── TABLE: full width, all columns visible, no overflow-x ── */
+    .table-scroll { overflow: visible !important; }
+    table.activity-table {
+      width: 100% !important;
+      table-layout: fixed !important;
+      font-size: 7.3pt !important;
+      border-collapse: collapse !important;
+    }
+    .activity-table thead th {
+      font-size: 6.6pt !important;
+      padding: 3pt 3pt !important;
+      white-space: normal !important;
+      word-break: break-word !important;
+      background: #e4e8ea !important;
+      border: 0.5pt solid #999 !important;
+    }
+    .activity-table tbody td {
+      padding: 3pt 3pt !important;
+      border: 0.5pt solid #ccc !important;
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
+      white-space: normal !important;
+      vertical-align: top !important;
+    }
+    .activity-table tr { page-break-inside: avoid !important; break-inside: avoid !important; }
+
+    /* ── Explicit column width allocation (% of table width) ──
+       No(2.5) Plan/Unplan(6) Group(7) Description(22) Station(8) Duration(4.5)
+       Start(7) Finish(7) Progress(9) Status(7) Pax(3.5) Personel(11) Remarks(11) Del(0) = 105 -> normalize
+    */
+    .activity-table col.col-no          { width: 2.3% !important; }
+    .activity-table col.col-planunplan  { width: 5.5% !important; }
+    .activity-table col.col-group       { width: 6.5% !important; }
+    .activity-table col.col-description { width: 23% !important; }
+    .activity-table col.col-station     { width: 7.5% !important; }
+    .activity-table col.col-duration    { width: 4% !important; }
+    .activity-table col.col-start       { width: 7% !important; }
+    .activity-table col.col-finish      { width: 7% !important; }
+    .activity-table col.col-progress    { width: 9% !important; }
+    .activity-table col.col-status      { width: 7% !important; }
+    .activity-table col.col-pax         { width: 3.2% !important; }
+    .activity-table col.col-personel    { width: 10% !important; }
+    .activity-table col.col-remarks     { width: 7.5% !important; }
+    .activity-table col.col-del         { display: none !important; }
+    .activity-table thead th:last-child,
+    .activity-table tbody td:last-child { display: none !important; }
+
+    /* Inputs: render as plain text, fully visible (no clipping/scroll) */
+    .cell-input, .afh-input, .afh-textarea, input, textarea, select {
+      border: none !important;
+      background: transparent !important;
+      outline: none !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      font-size: inherit !important;
+      color: #000 !important;
+      padding: 0 !important;
+      resize: none !important;
+      height: auto !important;
+      overflow: visible !important;
+      white-space: normal !important;
+    }
+    textarea.cell-input {
+      min-height: 0 !important;
+      height: auto !important;
+      overflow: visible !important;
+      white-space: pre-wrap !important;
+      word-break: break-word !important;
+      display: block !important;
+    }
+    select.cell-input { background-image: none !important; }
+    input[type="date"].cell-input::-webkit-calendar-picker-indicator { display: none !important; }
+
+    .duration-display { background: transparent !important; padding: 0 !important; font-size: 7.3pt !important; }
+
+    .progress-wrap { gap: 2pt !important; }
+    .progress-track { height: 5pt !important; }
+    .progress-pct-input { width: 22pt !important; font-size: 7pt !important; }
+
+    .status-select {
+      font-size: 6.8pt !important;
+      padding: 2pt 2pt !important;
+      -webkit-appearance: none !important;
+    }
+
+    /* ── AFH cards: 2 per row in landscape print, all text visible ── */
+    .afh-banner { padding: 6pt 10pt !important; border-radius: 4pt 4pt 0 0 !important; }
+    .afh-card-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8pt !important; padding: 8pt !important; }
+    .afh-card { padding: 8pt !important; break-inside: avoid-page; page-break-inside: avoid; }
+    .afh-field-label { font-size: 6.5pt !important; margin: 5pt 0 2pt !important; }
+    .afh-textarea, .afh-input { font-size: 7.5pt !important; min-height: 0 !important; height: auto !important; }
+    /* ── AFH multi-photo print ── */
+    .afh-photos-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 4pt !important; }
+    .afh-photo-item img { height: 70pt !important; }
+    .afh-photo-caption { font-size: 7pt !important; min-height: 0 !important; height: auto !important; overflow: visible !important; }
+    .afh-photo-del { display: none !important; }
+    .afh-upload-label { display: none !important; }
+    .afh-card-footer { margin-top: 5pt !important; padding-top: 4pt !important; }
+
+    .report-footer { margin-top: 10pt !important; padding: 6pt 0 !important; font-size: 7pt !important; }
+
+    /* Avoid breaking a card grid awkwardly */
+    #afhGrid { break-inside: avoid-page; }
+
+
+
+    /* MCU Training table print */
+    .mcu-tbl { font-size: 6.5pt !important; }
+    .mcu-tbl thead th { padding: 3pt 3pt !important; font-size: 6pt !important; }
+    .mcu-tbl tbody td { padding: 2pt 3pt !important; }
+    .mcu-del-btn, .mcu-view-btn { display: none !important; }
+    .mcu-cell-valid   { background: #e8f5e9 !important; -webkit-print-color-adjust: exact !important; }
+    .mcu-cell-alert   { background: #fff8e1 !important; -webkit-print-color-adjust: exact !important; }
+    .mcu-cell-expired { background: #fde8e8 !important; -webkit-print-color-adjust: exact !important; }
+    .mcu-status-badge { font-size: 6pt !important; padding: 1pt 4pt !important; }
+
+    /* Defect table print */
+    .defect-tbl { min-width: 0 !important; font-size: 6.5pt !important; }
+    .defect-tbl thead th { padding: 3pt 3pt !important; font-size: 6pt !important; }
+    .defect-tbl tbody td { padding: 2pt 3pt !important; }
+    .def-status-sel, .def-input, textarea.def-input { font-size: 6.5pt !important; }
+    .def-del-btn, .defect-area-tabs { display: none !important; }
+    .defect-area-panel { display: block !important; }
+    .def-closed { display: table-row !important; }
+    .def-closed td { background: #e8f5e9 !important; }
+    .def-inprogress td { background: #fff8e1 !important; }
+
+    /* Mob Plan print */
+    .mob-tbl { min-width: 0 !important; font-size: 7.5pt !important; }
+    .mob-tbl th, .mob-tbl td { padding: 3pt 4pt !important; border: 0.5pt solid #aaa !important; }
+    .mob-period-tabs { display: none !important; }
+    .mob-period-panel { display: block !important; }
+    .mob-add-remark, .mob-remark-del, .mob-del-btn { display: none !important; }
+    .mob-remark-txt { font-size: 7pt !important; }
+    .mob-status-pill { font-size: 7pt !important; padding: 2pt 4pt !important; }
+    input[type=date].mob-input { font-size: 7pt !important; }
+    .mob-row-mobilized td { background: #c8e6c9 !important; -webkit-print-color-adjust: exact !important; }
+    .mob-row-cancel td    { background: #ffcdd2 !important; -webkit-print-color-adjust: exact !important; }
+    .mob-row-plan td      { background: #fff8e1 !important; -webkit-print-color-adjust: exact !important; }
+
+  }
+
+  /* ═══ TAB NAVIGATION ═══ */
+  .tab-nav {
+    background: #fff;
+    border-bottom: 2px solid var(--rule);
+    position: sticky;
+    top: 67px;
+    z-index: 89;
+  }
+  .tab-nav-inner {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 0;
+  }
+  .tab-btn {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 13px 22px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    color: var(--muted);
+    transition: color .15s, border-color .15s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+    margin-bottom: -2px;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active { color: var(--ink); border-bottom-color: var(--primary); }
+  .tab-badge {
+    background: var(--primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+  .tab-badge.green { background: var(--green); }
+  .tab-badge.amber { background: var(--amber); }
+
+  .tab-page { display: none; }
+  .tab-page.active { display: block; }
+
+  /* ═══ ASK FOR HELP TABLE ═══ */
+  .afh-table-wrap {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: visible;
+    margin-bottom: 20px;
+  }
+  .afh-table-header {
+    background: linear-gradient(135deg, #2c4a5e 0%, #1f3a4a 100%);
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .afh-table-header h3 { font-size: 14px; font-weight: 700; }
+  .afh-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 1100px;
+  }
+  .afh-tbl thead th {
+    background: #b3d1e0;
+    color: #1a2d3a;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 9px 10px;
+    border: 1px solid #90bdd0;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .afh-tbl tbody td {
+    padding: 8px 10px;
+    border: 1px solid #dde8ed;
+    vertical-align: top;
+  }
+  .afh-tbl tbody tr:hover td { background: #f5fafc; }
+  .afh-tbl tbody tr.row-closed td { background: #e8f5e9; }
+  .afh-tbl tbody tr.row-closed.hidden-closed { display: none; }
+  .afh-tbl tbody tr.row-inprogress td { background: #fffbf0; }
+  .afh-tbl tbody tr.row-open td { background: #fff; }
+  .afh-tbl-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 2px 3px;
+    border-radius: 3px;
+    outline: none;
+  }
+  .afh-tbl-input:focus { background: #fff8e8; outline: 1px solid #e8d090; }
+  textarea.afh-tbl-input { resize: vertical; min-height: 36px; line-height: 1.45; }
+  .afh-status-pill {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: center;
+    width: 100%;
+  }
+  .pill-open       { background: #fff0e6; color: #c0392b; }
+  .pill-inprogress { background: #fff3cc; color: #b8860b; }
+  .pill-close      { background: #e6f4ea; color: #2e7d32; }
+  .afh-tbl-del {
+    background: #fde8e8;
+    color: var(--primary);
+    border: none;
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .afh-tbl-del:hover { background: var(--primary); color: #fff; }
+  .afh-tbl-remarks {
+    font-size: 11.5px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .afh-remarks-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 2px 0;
+    border-bottom: 1px dashed #eee;
+  }
+  .afh-remarks-item:last-child { border-bottom: none; }
+  .afh-remarks-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 16px;
+    padding-top: 2px;
+  }
+  .afh-remarks-text {
+    flex: 1;
+    font-size: 11px;
+    color: var(--ink);
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    outline: none;
+    resize: none;
+    line-height: 1.4;
+    min-height: 18px;
+    padding: 1px 2px;
+    border-radius: 2px;
+  }
+  .afh-remarks-text:focus { background: #fff8e8; }
+  .afh-remarks-del {
+    background: none;
+    border: none;
+    color: #ddd;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+  }
+  .afh-remarks-del:hover { color: var(--primary); }
+  .afh-add-remark {
+    font-size: 10px;
+    color: var(--steel);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 3px 0 0;
+    display: block;
+  }
+  .afh-add-remark:hover { text-decoration: underline; }
+
+  /* AFH summary pills */
+  .afh-summary-strip {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .afh-sum-card {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 12px 18px;
+    min-width: 100px;
+    text-align: center;
+    flex: 1;
+  }
+  .afh-sum-card::before { content:''; display:block; height:3px; border-radius:2px; margin-bottom:8px; }
+  .afh-sum-card.s-open::before { background: var(--primary); }
+  .afh-sum-card.s-prog::before { background: var(--amber); }
+  .afh-sum-card.s-close::before { background: var(--green); }
+  .afh-sum-card.s-total::before { background: var(--steel); }
+  .afh-sum-num { font-size: 26px; font-weight: 700; font-family: 'Libre Baskerville', serif; line-height: 1; }
+  .afh-sum-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px; font-weight: 600; }
+
+  .toggle-closed-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .toggle-closed-bar input { cursor: pointer; accent-color: var(--green); }
+
+
+  /* ═══ MOB PLAN TABLE ═══ */
+  .mob-period-tabs {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 0;
+    border-bottom: 2px solid var(--rule);
+    padding: 0 20px;
+  }
+  .mob-period-btn {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    color: var(--muted);
+    white-space: nowrap;
+    margin-bottom: -2px;
+    border-radius: 4px 4px 0 0;
+    transition: background .12s, color .12s;
+  }
+  .mob-period-btn:hover { background: #f3f1ea; color: var(--ink); }
+  .mob-period-btn.active { color: var(--green); border-bottom-color: var(--green); font-weight: 700; }
+  .mob-period-btn.add-period {
+    color: var(--primary);
+    border: 1.5px dashed #f0c8c2;
+    border-bottom: none;
+    padding: 7px 12px;
+    margin-left: 6px;
+    border-radius: 4px;
+  }
+  .mob-period-btn.add-period:hover { background: var(--red-bg); }
+  .mob-period-panel { display: none; }
+  .mob-period-panel.active { display: block; }
+
+  .mob-table-wrap {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    overflow: visible;
+    margin-bottom: 20px;
+  }
+  .mob-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 1100px;
+  }
+  .mob-tbl thead th {
+    background: #e8eef3;
+    color: #1a2d3a;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 9px 10px;
+    border: 1px solid #c5d5df;
+    white-space: normal;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .mob-tbl tbody td {
+    padding: 8px 10px;
+    border: 1px solid #dde5ea;
+    vertical-align: top;
+  }
+  .mob-tbl tbody tr:hover td { filter: brightness(.97); }
+
+  /* Row colors by status */
+  .mob-row-mobilized td { background: #c8e6c9 !important; }
+  .mob-row-cancel     td { background: #ffcdd2 !important; color: #b71c1c; }
+  .mob-row-submission td { background: #fff; }
+  .mob-row-plan       td { background: #fff8e1; }
+
+  .mob-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 2px 3px;
+    border-radius: 3px;
+    outline: none;
+    color: inherit;
+  }
+  .mob-input:focus { background: rgba(255,255,255,.7); outline: 1px solid #e8d090; }
+  textarea.mob-input { resize: vertical; min-height: 32px; line-height: 1.45; }
+  input[type="date"].mob-input { font-family: monospace; font-size: 11px; }
+
+  .mob-status-pill {
+    font-size: 10.5px; font-weight: 700; padding: 5px 8px;
+    border-radius: 4px; border: none; cursor: pointer;
+    font-family: inherit; appearance: none; -webkit-appearance: none;
+    text-align: center; width: 100%;
+  }
+  .mpill-mob  { background: #388e3c; color: #fff; }
+  .mpill-sub  { background: #1565c0; color: #fff; }
+  .mpill-plan { background: #f57f17; color: #fff; }
+  .mpill-can  { background: #c62828; color: #fff; }
+  .mpill-done { background: #546e7a; color: #fff; }
+
+  .mob-del-btn {
+    background: #fde8e8; color: var(--primary);
+    border: none; width: 22px; height: 22px;
+    border-radius: 4px; cursor: pointer;
+    font-size: 11px; font-weight: 700;
+  }
+  .mob-del-btn:hover { background: var(--primary); color: #fff; }
+
+  /* Remarks list for mob plan */
+  .mob-remarks-list { display: flex; flex-direction: column; gap: 2px; }
+  .mob-remark-row { display: flex; align-items: flex-start; gap: 4px; }
+  .mob-remark-num { font-size: 10px; font-weight: 700; color: var(--muted); min-width: 14px; padding-top: 3px; }
+  .mob-remark-chk { margin-top: 3px; cursor: pointer; accent-color: #388e3c; flex-shrink: 0; }
+  .mob-remark-txt {
+    flex: 1; font-size: 11px; border: none; background: transparent;
+    font-family: inherit; outline: none; resize: none;
+    line-height: 1.4; min-height: 18px; padding: 1px 2px;
+    border-radius: 2px; color: inherit;
+  }
+  .mob-remark-txt:focus { background: rgba(255,255,255,.6); }
+  .mob-remark-txt.done-remark { text-decoration: line-through; opacity: .65; }
+  .mob-remark-del { background: none; border: none; color: #ccc; font-size: 11px; cursor: pointer; padding: 0 2px; }
+  .mob-remark-del:hover { color: var(--primary); }
+  .mob-add-remark { font-size: 10px; color: var(--steel); background: none; border: none; cursor: pointer; font-family: inherit; padding: 2px 0 0; display: block; }
+  .mob-add-remark:hover { text-decoration: underline; }
+
+  /* Summary bar */
+  .mob-summary-strip {
+    display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .mob-sum-card {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    padding: 10px 16px; flex: 1; text-align: center; min-width: 80px;
+  }
+  .mob-sum-card::before { content:''; display:block; height:3px; border-radius:2px; margin-bottom:6px; }
+  .mob-sum-card.ms-total::before  { background: var(--steel); }
+  .mob-sum-card.ms-mob::before    { background: #388e3c; }
+  .mob-sum-card.ms-sub::before    { background: #1565c0; }
+  .mob-sum-card.ms-plan::before   { background: #f57f17; }
+  .mob-sum-card.ms-cancel::before { background: #c62828; }
+  .mob-sum-num { font-size: 22px; font-weight: 700; font-family: 'Libre Baskerville', serif; line-height: 1; }
+  .mob-sum-lbl { font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; font-weight: 600; }
+
+
+  /* ═══ DEFECT MONITORING ═══ */
+  .defect-area-tabs {
+    display: flex; gap: 0; border-bottom: 2px solid var(--rule); margin-bottom: 0;
+  }
+  .defect-area-btn {
+    font-size: 13px; font-weight: 700; padding: 11px 28px;
+    background: transparent; border: none; border-bottom: 3px solid transparent;
+    cursor: pointer; color: var(--muted); margin-bottom: -2px;
+    transition: color .15s, border-color .15s; letter-spacing: .3px;
+  }
+  .defect-area-btn:hover { color: var(--ink); }
+  .defect-area-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .defect-area-panel { display: none; }
+  .defect-area-panel.active { display: block; }
+
+  .defect-tbl-wrap { overflow-x: auto; border: 1px solid var(--rule); border-top: none; border-radius: 0 0 10px 10px; }
+  .defect-tbl {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    table-layout: auto;
+  }
+  .defect-tbl thead tr.th-group th {
+    background: #2c4a5e; color: #fff; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .4px; padding: 7px 10px;
+    border: 1px solid #1f3a4a; text-align: center; white-space: nowrap;
+  }
+  .defect-tbl thead tr.th-cols th {
+    background: #5c7c8f; color: #fff; font-size: 9.5px; font-weight: 700;
+    padding: 7px 10px; border: 1px solid #4a6b7c; text-align: center;
+    white-space: nowrap;
+  }
+  .defect-tbl tbody td {
+    padding: 7px 10px; border: 1px solid #dde5ea; vertical-align: top;
+  }
+  /* Column min-widths so content never gets squished */
+  .defect-tbl td:nth-child(1)  { min-width: 36px;  text-align: center; }
+  .defect-tbl td:nth-child(2)  { min-width: 80px;  }  /* Area */
+  .defect-tbl td:nth-child(3)  { min-width: 120px; }  /* Flow Station */
+  .defect-tbl td:nth-child(4)  { min-width: 130px; }  /* Category */
+  .defect-tbl td:nth-child(5)  { min-width: 80px;  text-align: center; }  /* Criticality */
+  .defect-tbl td:nth-child(6)  { min-width: 110px; }  /* Tag Number */
+  .defect-tbl td:nth-child(7)  { min-width: 110px; text-align: center; }  /* Defect Date */
+  .defect-tbl td:nth-child(8)  { min-width: 110px; text-align: center; }  /* Defect Reported */
+  .defect-tbl td:nth-child(9)  { min-width: 200px; }  /* Defect Finding */
+  .defect-tbl td:nth-child(10) { min-width: 200px; }  /* Action Plan */
+  .defect-tbl td:nth-child(11) { min-width: 160px; }  /* Follow Up */
+  .defect-tbl td:nth-child(12) { min-width: 100px; text-align: center; }  /* Status */
+  .defect-tbl td:nth-child(13) { min-width: 110px; text-align: center; }  /* Complete Date */
+  .defect-tbl td:nth-child(14) { min-width: 160px; }  /* Materials */
+  .defect-tbl td:nth-child(15) { min-width: 50px;  text-align: center; }  /* Qty */
+  .defect-tbl td:nth-child(16) { min-width: 55px;  text-align: center; }  /* UOM */
+  .defect-tbl td:nth-child(17) { min-width: 90px;  }  /* Mat Status */
+  .defect-tbl td:nth-child(18) { min-width: 85px;  }  /* No CE */
+  .defect-tbl td:nth-child(19) { min-width: 85px;  }  /* RO */
+  .defect-tbl td:nth-child(20) { min-width: 180px; }  /* Remarks */
+  .defect-tbl td:nth-child(21) { min-width: 32px;  text-align: center; }  /* Del */
+
+  /* Inputs inside defect table fill their cell */
+  .defect-tbl .def-input { min-width: 0; width: 100%; }
+  .defect-tbl tbody tr:hover td { background: #f5fafc !important; }
+  .defect-tbl tbody tr.def-closed { display: none; }
+  .defect-tbl tbody tr.def-closed.show-closed { display: table-row; }
+  .defect-tbl tbody tr.def-closed td { background: #e8f5e9 !important; opacity: .75; }
+  .defect-tbl tbody tr.def-inprogress td { background: #fff8e1 !important; }
+  .defect-tbl tbody tr.def-open td { background: #fff !important; }
+
+  .def-input {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 11px;
+    padding: 2px 3px;
+    border-radius: 3px;
+    outline: none;
+    color: inherit;
+    box-sizing: border-box;
+  }
+  .def-input:focus { background: #fff8e8; outline: 1px solid #e8d090; }
+  textarea.def-input { resize: vertical; min-height: 30px; line-height: 1.4; }
+  input[type="date"].def-input { font-family: monospace; font-size: 10.5px; }
+  select.def-input {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23888'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 16px;
+  }
+
+  .def-status-sel {
+    font-size: 10px; font-weight: 700; padding: 4px 6px;
+    border-radius: 4px; border: none; cursor: pointer;
+    font-family: inherit; appearance: none; -webkit-appearance: none;
+    text-align: center; width: 100%;
+  }
+  .dst-open       { background: #fde8e8; color: #c62828; }
+  .dst-inprogress { background: #fff3e0; color: #e65100; }
+  .dst-closed     { background: #e8f5e9; color: #2e7d32; }
+
+  .def-del-btn {
+    background: #fde8e8; color: var(--primary);
+    border: none; width: 22px; height: 22px;
+    border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 700;
+  }
+  .def-del-btn:hover { background: var(--primary); color: #fff; }
+
+  /* Defect summary cards */
+  .def-sum-strip {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 14px;
+  }
+  .def-sum-card {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    padding: 12px 16px; text-align: center; position: relative; overflow: hidden;
+  }
+  .def-sum-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  }
+  .def-sum-card.ds-total::before  { background: var(--steel); }
+  .def-sum-card.ds-open::before   { background: #c62828; }
+  .def-sum-card.ds-prog::before   { background: #e65100; }
+  .def-sum-card.ds-closed::before { background: #2e7d32; }
+  .def-sum-num { font-size: 26px; font-weight: 700; font-family: "Libre Baskerville", serif; line-height: 1; }
+  .def-sum-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 5px; font-weight: 600; }
+
+  .def-toggle-bar {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--muted); margin-bottom: 10px;
+  }
+  .def-toggle-bar input { cursor: pointer; accent-color: var(--green); }
+
+  .def-import-hint {
+    font-size: 10px; color: var(--muted); font-style: italic; margin-top: 4px;
+  }
+
+
+  /* ═══ MCU & TRAINING MONITORING ═══ */
+  .mcu-tbl-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 0 10px 10px 10px; }
+  .mcu-tbl {
+    width: max-content; min-width: 100%;
+    border-collapse: collapse; font-size: 11px;
+    table-layout: auto;
+  }
+  .mcu-tbl thead tr.mth-group th {
+    background: #1a3a5c; color: #fff;
+    font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .4px; padding: 7px 10px;
+    border: 1px solid #0f2a45; text-align: center; white-space: nowrap;
+  }
+  .mcu-tbl thead tr.mth-cols th {
+    background: #2e5d8e; color: #fff;
+    font-size: 9px; font-weight: 700;
+    padding: 6px 8px; border: 1px solid #1f4870;
+    text-align: center; white-space: nowrap;
+  }
+  .mcu-tbl tbody td {
+    padding: 6px 8px; border: 1px solid #dde5ea; vertical-align: middle;
+  }
+  .mcu-tbl tbody tr:hover td { filter: brightness(.97); }
+
+  /* Status cell coloring */
+  .mcu-cell-valid    { background: #e8f5e9 !important; }
+  .mcu-cell-alert    { background: #fff8e1 !important; }
+  .mcu-cell-expired  { background: #fde8e8 !important; }
+  .mcu-cell-empty    { background: #f5f5f5 !important; }
+
+  .mcu-status-badge {
+    font-size: 9px; font-weight: 700; padding: 2px 7px;
+    border-radius: 10px; white-space: nowrap; display: inline-block;
+  }
+  .mcu-badge-valid   { background: #c8e6c9; color: #2e7d32; }
+  .mcu-badge-alert   { background: #fff3e0; color: #e65100; }
+  .mcu-badge-expired { background: #fde8e8; color: #c62828; }
+  .mcu-badge-na      { background: #eeeeee; color: #9e9e9e; }
+
+  .mcu-input {
+    width: 100%; border: none; background: transparent;
+    font-family: inherit; font-size: 11px; padding: 2px 3px;
+    border-radius: 3px; outline: none; color: inherit;
+    box-sizing: border-box;
+  }
+  .mcu-input:focus { background: #fff8e8; outline: 1px solid #e8d090; }
+  input[type="date"].mcu-input { font-family: monospace; font-size: 10.5px; }
+  textarea.mcu-input { resize: vertical; min-height: 28px; line-height: 1.3; }
+
+  .mcu-del-btn {
+    background: #fde8e8; color: var(--primary);
+    border: none; width: 22px; height: 22px;
+    border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 700;
+  }
+  .mcu-del-btn:hover { background: var(--primary); color: #fff; }
+
+  /* Legend */
+  .mcu-legend {
+    display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px;
+    align-items: center; margin-bottom: 12px;
+    background: #fff; border: 1px solid var(--rule);
+    border-radius: 7px; padding: 10px 16px;
+  }
+  .mcu-legend-item { display: flex; align-items: center; gap: 5px; }
+  .mcu-legend-dot {
+    width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0;
+  }
+  .mcu-ld-valid   { background: #c8e6c9; }
+  .mcu-ld-alert   { background: #fff3e0; border: 1px solid #ffe082; }
+  .mcu-ld-expired { background: #fde8e8; }
+  .mcu-ld-na      { background: #eeeeee; }
+
+  /* Summary strip MCU */
+  .mcu-sum-strip {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 14px;
+  }
+  .mcu-sum-card {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    padding: 12px 16px; text-align: center;
+  }
+  .mcu-sum-card::before { content:''; display:block; height:3px; border-radius:2px; margin-bottom:7px; }
+  .mcu-sum-card.ms-total::before   { background: var(--steel); }
+  .mcu-sum-card.ms-valid::before   { background: #388e3c; }
+  .mcu-sum-card.ms-alert::before   { background: #e65100; }
+  .mcu-sum-card.ms-expired::before { background: #c62828; }
+  .mcu-sum-num { font-size: 24px; font-weight: 700; font-family:"Libre Baskerville",serif; line-height:1; }
+  .mcu-sum-lbl { font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; font-weight: 600; }
+
+  /* Cert tabs inside MCU page */
+  .mcu-view-tabs {
+    display: flex; gap: 0; border-bottom: 2px solid var(--rule);
+    background: #fff; border-radius: 8px 8px 0 0;
+    border: 1px solid var(--rule); border-bottom: 2px solid var(--rule);
+    padding: 0 16px;
+  }
+  .mcu-view-btn {
+    font-size: 12px; font-weight: 600; padding: 10px 16px;
+    background: transparent; border: none; border-bottom: 3px solid transparent;
+    cursor: pointer; color: var(--muted); margin-bottom: -2px;
+    transition: color .15s, border-color .15s; white-space: nowrap;
+  }
+  .mcu-view-btn:hover { color: var(--ink); }
+  .mcu-view-btn.active { color: #1565c0; border-bottom-color: #1565c0; }
+
+
+
+
+  /* ═══ ACTIVITY ROW CHECKLIST (Remarks) ═══ */
+  .act-checklist { display: flex; flex-direction: column; gap: 3px; }
+  .act-check-item {
+    display: flex; align-items: center; gap: 5px;
+  }
+  .act-check-item input[type="checkbox"] {
+    width: 13px; height: 13px; flex-shrink: 0;
+    cursor: pointer; accent-color: var(--green);
+  }
+  .act-check-text {
+    flex: 1; font-size: 11.5px; font-family: inherit;
+    border: none; background: transparent; outline: none;
+    padding: 1px 2px; border-radius: 2px; color: inherit;
+    resize: none; line-height: 1.35; min-height: 18px;
+  }
+  .act-check-text:focus { background: #fff8e8; outline: 1px solid #e8d090; }
+  .act-check-text.done { text-decoration: line-through; color: var(--muted); }
+  .act-check-del {
+    background: none; border: none; color: #ccc;
+    font-size: 12px; cursor: pointer; padding: 0 2px; flex-shrink: 0;
+    line-height: 1;
+  }
+  .act-check-del:hover { color: var(--primary); }
+
+  @media print {
+    .act-check-del { display: none !important; }
+    .act-check-item input[type="checkbox"] {
+      -webkit-appearance: auto !important;
+      appearance: auto !important;
+    }
+  }
+
+  .desc-cell-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 220px;
+  }
+  .desc-photos-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .desc-photo-item {
+    position: relative;
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+  .desc-photo-item img {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    object-fit: contain;
+    display: block;
+    background: #f0f0f0;
+  }
+  .desc-photo-caption {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--rule);
+    background: #fff;
+    font-size: 10px;
+    padding: 4px 6px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    color: var(--ink);
+    line-height: 1.3;
+    min-height: 26px;
+  }
+  .desc-photo-caption:focus { background: #fffde8; }
+  .desc-photo-del {
+    position: absolute;
+    top: 4px; right: 4px;
+    background: rgba(176,0,0,.85);
+    color: #fff;
+    border: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    z-index: 2;
+  }
+  .desc-photo-del:hover { background: var(--primary); }
+  .desc-add-photo-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--steel);
+    cursor: pointer;
+    padding: 3px 0;
+    border: none;
+    background: none;
+    font-family: inherit;
+  }
+  .desc-add-photo-label:hover { color: var(--primary); text-decoration: underline; }
+  .desc-add-photo-label input { display: none; }
+  /* Paste hint */
+  .paste-hint {
+    font-size: 9px; color: var(--muted); font-style: italic; margin-top: 1px;
+  }
+
+  @media print {
+    .desc-add-photo-label { display: none !important; }
+    .paste-hint { display: none !important; }
+    .desc-photo-del { display: none !important; }
+    .desc-photo-item img { max-height: 120pt !important; object-fit: contain !important; }
+    .desc-photo-caption { font-size: 7pt !important; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════ TOP BAR ═══════════ -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">I</div>
+      <div class="brand-text">
+        <h1 id="topbarTitle">Weekly Activity Status Report</h1>
+        <div class="sub">Electrical Maintenance — PHE ONWJ</div>
+      </div>
+    </div>
+    <div class="topbar-meta">
+      <div class="updated"><span class="dot-live"></span> Update: <input id="reportUpdateDate" class="mono" type="text" placeholder="dd/mm/yyyy" style="background:transparent;border:none;border-bottom:1px dashed #777;color:#fff;font-size:11.5px;width:90px;"></div>
+      <select id="companySelect" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;padding:4px 8px;border-radius:4px;font-family:inherit;">
+        <option>PT. Indokomas Buana Perkasa</option>
+        <option>PT. Catur Elang Perkasa</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ TAB NAVIGATION ═══════════ -->
+<div class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" id="tab-weekly" onclick="switchTab('weekly')">
+      📋 Weekly Activity
+      <span class="tab-badge" id="badge-weekly">0</span>
+    </button>
+    <button class="tab-btn" id="tab-afh" onclick="switchTab('afh')">
+      🆘 Ask For Help / AFH
+      <span class="tab-badge amber" id="badge-afh">0</span>
+    </button>
+    <button class="tab-btn" id="tab-mob" onclick="switchTab('mob')">
+      🚁 Mob Plan
+      <span class="tab-badge green" id="badge-mob">0</span>
+    </button>
+    <button class="tab-btn" id="tab-defect" onclick="switchTab('defect')">
+      🔧 Monitoring Defect
+      <span class="tab-badge" id="badge-defect" style="background:#c62828;">0</span>
+    </button>
+    <button class="tab-btn" id="tab-mcu" onclick="switchTab('mcu')">
+      🏥 MCU &amp; Training
+      <span class="tab-badge" id="badge-mcu" style="background:#e65100;">0</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════ ACTION BAR ═══════════ -->
+<div class="actionbar">
+  <div class="actionbar-inner">
+    <div style="display:flex;align-items:center;gap:6px;background:#f3f1ea;border:1px solid var(--rule);border-radius:6px;padding:4px 6px;">
+      <span style="font-size:10.5px;font-weight:700;color:var(--muted);padding-left:4px;">📅 Periode:</span>
+      <select id="archiveYear" onchange="onArchiveChange()" style="font-size:12px;font-weight:700;border:none;background:transparent;padding:4px 6px;font-family:inherit;cursor:pointer;color:var(--ink);"></select>
+      <select id="archiveMonth" onchange="onArchiveChange()" style="font-size:12px;font-weight:700;border:none;background:transparent;padding:4px 6px;font-family:inherit;cursor:pointer;color:var(--ink);"></select>
+    </div>
+    <div id="action-weekly" style="display:flex;gap:8px;align-items:center;">
+      <button class="btn btn-primary" onclick="addCrewGroup()">+ Tambah Crew Change</button>
+    </div>
+    <div id="action-afh" style="display:none;gap:8px;align-items:center;">
+      <button class="btn" style="background:#2c4a5e;color:#fff;" onclick="addAfhRow()">+ Tambah Ask For Help</button>
+      <label style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--muted);">
+        <input type="checkbox" id="showClosedRows" onchange="toggleClosedRows()" style="cursor:pointer;accent-color:var(--green);">
+        Tampilkan yang Closed
+      </label>
+    </div>
+    <div id="action-mob" style="display:none;gap:8px;align-items:center;">
+      <button class="btn" style="background:#388e3c;color:#fff;" onclick="addMobRow()">+ Tambah Baris</button>
+      <button class="btn btn-outline" onclick="addMobPeriod()">+ Periode Crew Change</button>
+    </div>
+<div id="action-mcu" style="display:none;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="addMcuRow()">+ Tambah Crew</button>
+      <button class="btn btn-outline" onclick="recalcMcuStatus()">🔄 Update Status</button>
+    </div>
+    <div id="action-defect" style="display:none;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="addDefectRow('west')">+ Tambah Defect</button>
+      <label class="btn btn-outline" style="margin:0;">
+        📊 Import Excel
+        <input type="file" accept=".xlsx,.xls,.csv" onchange="importDefectExcel(event)" style="display:none;">
+      </label>
+      <label style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--muted);">
+        <input type="checkbox" id="showClosedDefects" onchange="toggleClosedDefects()" style="cursor:pointer;accent-color:var(--green);">
+        Tampilkan Closed
+      </label>
+    </div>
+    <div class="spacer"></div>
+    <span class="save-toast" id="saveToast">✓ Tersimpan</span>
+    <button class="btn btn-outline" onclick="exportExcel()">📊 Export Excel</button>
+    <button class="btn btn-outline" onclick="saveHTML()">🌐 Simpan HTML</button>
+    <label class="btn btn-outline" style="margin:0;">
+      📄 Muat HTML
+      <input type="file" accept=".html" onchange="loadHTML(event)" style="display:none;">
+    </label>
+    <button class="btn btn-ghost" onclick="doPrint()">🖨 Print</button>
+    <div style="width:1px;background:var(--rule);height:24px;margin:0 4px;"></div>
+    <button id="gdriveBtn" onclick="saveToGoogleDrive()" style="background:#fff;color:#333;border:1.5px solid #ddd;padding:7px 14px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">
+      <svg width="16" height="16" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.2 48.5c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75L86.1 57c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 52.5H27.5L13.75 76.3c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.5h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
+      Simpan ke Drive
+    </button>
+    <span id="gdriveStatus" style="font-size:11px;font-weight:600;display:none;align-self:center;"></span>
+  </div>
+</div>
+
+<!-- ═══════════ TAB PAGES ═══════════ -->
+<div id="page-weekly" class="tab-page active">
+<div class="wrap">
+
+  <!-- ═══════════ SUMMARY STRIP ═══════════ -->
+  <div class="summary-strip" id="summaryStrip">
+    <div class="stat-card c-total">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">Total Activity</div>
+    </div>
+    <div class="stat-card c-complete">
+      <div class="stat-num" id="statComplete">0</div>
+      <div class="stat-label">Complete</div>
+    </div>
+    <div class="stat-card c-inprogress">
+      <div class="stat-num" id="statInprogress">0</div>
+      <div class="stat-label">Inprogress</div>
+    </div>
+    <div class="stat-card c-cancel">
+      <div class="stat-num" id="statCancel">0</div>
+      <div class="stat-label">Cancel</div>
+    </div>
+    <div class="stat-card c-afh">
+      <div class="stat-num" id="statAfh">0</div>
+      <div class="stat-label">Concern / AFH</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ ACTIVITY SECTION ═══════════ -->
+  <div class="section-head">
+    <div class="section-title"><span class="idx">01</span> Weekly Activity</div>
+    <div class="section-sub">Grouped by Crew Change period</div>
+  </div>
+
+  <div id="crewGroupsContainer"></div>
+
+  <!-- ═══════════ CONCERN / AFH SECTION ═══════════ -->
+  <div class="section-head" style="margin-top:8px;">
+    <div class="section-title"><span class="idx">02</span> Concern / AFH</div>
+    <div class="section-sub">Area For Highlight — issue, observation &amp; HSE concern</div>
+  </div>
+
+  <div class="crew-group" style="margin-bottom:30px;">
+    <div class="afh-banner">
+      <div class="title-block">
+        <div class="afh-icon">⚠</div>
+        <h3 style="font-size:14.5px;">Concern / Area For Highlight (AFH)</h3>
+      </div>
+      <label style="display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,.85);cursor:pointer;user-select:none;">
+        <input type="checkbox" id="showClosedAfh" onchange="toggleClosedAfh()" style="cursor:pointer;width:14px;height:14px;accent-color:#fff;">
+        Tampilkan yang sudah Closed
+      </label>
+    </div>
+    <div class="afh-card-grid" id="afhGrid">
+      <!-- AFH cards injected here -->
+    </div>
+    <div style="padding:10px 18px 14px;">
+      <button onclick="addAfhCard()" style="font-size:12px;font-weight:700;color:var(--primary);background:var(--red-bg);border:1.5px dashed #f0c8c2;border-radius:6px;padding:10px 20px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;transition:background .15s;">
+        <span style="font-size:18px;width:28px;height:28px;background:#fde8e8;border-radius:50%;display:flex;align-items:center;justify-content:center;">+</span>
+        Tambah Concern / AFH
+      </button>
+    </div>
+    <div id="afhAllClosedMsg" style="display:none;text-align:center;padding:30px 20px;color:var(--muted);font-size:12.5px;">
+      ✓ Semua concern/AFH periode ini sudah <strong>Closed</strong>. Centang "Tampilkan yang sudah Closed" di atas untuk melihat riwayatnya.
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /wrap -->
+</div><!-- /page-weekly -->
+
+<!-- ═══════════ ASK FOR HELP PAGE ═══════════ -->
+<div id="page-afh" class="tab-page">
+<div class="wrap">
+
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+    <div class="section-title"><span class="idx" style="background:var(--steel);">02</span> Monitoring Ask For Help (AFH)</div>
+    <div class="section-sub">PT. Indokomas Buana Perkasa — <span id="afh-company-sub">PHE ONWJ</span></div>
+  </div>
+
+  <!-- Summary -->
+  <div class="afh-summary-strip" id="afhSummaryStrip">
+    <div class="afh-sum-card s-total"><div class="afh-sum-num" id="afhStatTotal">0</div><div class="afh-sum-lbl">Total AFH</div></div>
+    <div class="afh-sum-card s-open"><div class="afh-sum-num" id="afhStatOpen">0</div><div class="afh-sum-lbl">Open</div></div>
+    <div class="afh-sum-card s-prog"><div class="afh-sum-num" id="afhStatProg">0</div><div class="afh-sum-lbl">In Progress</div></div>
+    <div class="afh-sum-card s-close"><div class="afh-sum-num" id="afhStatClose">0</div><div class="afh-sum-lbl">Close</div></div>
+  </div>
+
+  <div class="afh-table-wrap">
+    <div class="afh-table-header">
+      <div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);letter-spacing:1px;margin-bottom:3px;">MONITORING</div>
+        <h3>ASK FOR HELP — PHE ONWJ</h3>
+      </div>
+      <span style="font-size:11px;color:rgba(255,255,255,.7);">Row hijau = Closed · Row kuning = In Progress</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="afh-tbl" id="afhMainTable">
+        <thead>
+          <tr>
+            <th style="width:36px;">NO</th>
+            <th style="width:90px;">AREA</th>
+            <th style="min-width:260px;">KEBUTUHAN / DETAIL ORDER</th>
+            <th style="width:60px;">QTY</th>
+            <th style="width:95px;">TGL MULAI REQUEST</th>
+            <th style="width:90px;">REQUESTOR</th>
+            <th style="width:95px;">TARGET COMPLETION</th>
+            <th style="width:100px;">REFF. COST ESTIMATE</th>
+            <th style="width:100px;">REFF. REQUEST ORDER</th>
+            <th style="width:95px;">STATUS</th>
+            <th style="min-width:280px;">REMARKS</th>
+            <th style="width:32px;" class="no-print"></th>
+          </tr>
+        </thead>
+        <tbody id="afhTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+</div><!-- /page-afh -->
+
+
+
+
+
+
+
+<!-- ═══════════ MCU & TRAINING PAGE ═══════════ -->
+<div id="page-mcu" class="tab-page">
+<div class="wrap">
+
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+    <div class="section-title"><span class="idx" style="background:#1565c0;">05</span> MCU &amp; Training Monitoring</div>
+    <div style="font-size:12px;color:var(--muted);">Status sertifikasi &amp; kesehatan seluruh crew</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="mcu-sum-strip">
+    <div class="mcu-sum-card ms-total"><div class="mcu-sum-num" id="mcuStatTotal">0</div><div class="mcu-sum-lbl">Total Crew</div></div>
+    <div class="mcu-sum-card ms-valid"><div class="mcu-sum-num" id="mcuStatValid">0</div><div class="mcu-sum-lbl">Semua Valid</div></div>
+    <div class="mcu-sum-card ms-alert"><div class="mcu-sum-num" id="mcuStatAlert">0</div><div class="mcu-sum-lbl">Perlu Perhatian</div></div>
+    <div class="mcu-sum-card ms-expired"><div class="mcu-sum-num" id="mcuStatExpired">0</div><div class="mcu-sum-lbl">Ada Expired</div></div>
+  </div>
+
+  <!-- Legend -->
+  <div class="mcu-legend">
+    <span style="font-size:11px;font-weight:700;color:var(--muted);">KETERANGAN:</span>
+    <div class="mcu-legend-item"><div class="mcu-legend-dot mcu-ld-valid"></div><span><strong>Hijau</strong> — Valid (&gt; 1 bulan)</span></div>
+    <div class="mcu-legend-item"><div class="mcu-legend-dot mcu-ld-alert"></div><span><strong>Kuning</strong> — Alert (&lt; 1 bulan / akan habis)</span></div>
+    <div class="mcu-legend-item"><div class="mcu-legend-dot mcu-ld-expired"></div><span><strong>Merah</strong> — Expired (sudah lewat)</span></div>
+    <div class="mcu-legend-item"><div class="mcu-legend-dot mcu-ld-na"></div><span><strong>Abu</strong> — Belum diisi</span></div>
+    <span style="margin-left:auto;font-size:11px;color:var(--muted);">Status diupdate otomatis berdasarkan tanggal hari ini</span>
+  </div>
+
+  <!-- MCU Table -->
+  <div class="mcu-tbl-wrap">
+    <table class="mcu-tbl" id="mcuTable">
+      <thead>
+        <tr class="mth-group">
+          <th rowspan="2" style="width:36px;">NO</th>
+          <th rowspan="2" style="min-width:150px;">NAMA</th>
+          <th rowspan="2" style="min-width:120px;">POSISI</th>
+          <th colspan="4" style="background:#1a3a5c !important;">MCU</th>
+          <th colspan="3" style="background:#1a3a5c !important;">Sea Survival</th>
+          <th colspan="3" style="background:#1a3a5c !important;">SBTC</th>
+          <th colspan="3" style="background:#1a3a5c !important;">First Aid</th>
+          <th colspan="3" style="background:#1a3a5c !important;">Fire Fighting</th>
+          <th colspan="3" style="background:#1a3a5c !important;">One Sika</th>
+          <th colspan="3" style="background:#1a3a5c !important;">Rigger</th>
+          <th colspan="3" style="background:#1a3a5c !important;">Lifting Assessment</th>
+          <th colspan="3" style="background:#1a3a5c !important;">Working at Height</th>
+          <th colspan="3" style="background:#1a3a5c !important;">K3 Listrik</th>
+          <th rowspan="2" style="width:32px;" class="no-print"></th>
+        </tr>
+        <tr class="mth-cols">
+          <th style="width:100px;">Date Exp.</th>
+          <th style="width:75px;">Status</th>
+          <th style="min-width:130px;">Follow Up MCU</th>
+          <th style="min-width:110px;">Remark</th>
+          <th style="width:100px;">Date Exp.</th><th style="width:75px;">Status</th><th style="min-width:110px;">Remark</th>
+          <th style="width:100px;">Date Exp.</th><th style="width:75px;">Status</th><th style="min-width:110px;">Remark</th>
+          <th style="width:100px;">Date Exp.</th><th style="width:75px;">Status</th><th style="min-width:110px;">Remark</th>
+          <th style="width:100px;">Date Exp.</th><th style="width:75px;">Status</th><th style="min-width:110px;">Remark</th>
+          <th style="width:100px;">Date Exp.</th><th style="width:75px;">Status</th><th style="min-width:110px;">Remark</th>
+          <th style="width:100px;">Date Exp.</th><th style="width:75px;">Status</th><th style="min-width:110px;">Remark</th>
+          <th style="width:100px;">Date Exp.</th><th style="width:75px;">Status</th><th style="min-width:110px;">Remark</th>
+          <th style="width:100px;">Date Exp.</th><th style="width:75px;">Status</th><th style="min-width:110px;">Remark</th>
+          <th style="width:100px;">Date Exp.</th><th style="width:75px;">Status</th><th style="min-width:110px;">Remark</th>
+        </tr>
+      </thead>
+      <tbody id="mcuTableBody"></tbody>
+    </table>
+  </div>
+
+</div>
+</div><!-- /page-mcu -->
+
+<!-- ═══════════ DEFECT MONITORING PAGE ═══════════ -->
+<div id="page-defect" class="tab-page">
+<div class="wrap">
+
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+    <div class="section-title"><span class="idx" style="background:#c62828;">04</span> Monitoring Defect</div>
+    <div style="font-size:12px;color:var(--muted);">West Area &amp; East Area — PHE ONWJ</div>
+  </div>
+
+  <!-- ── FILTER BAR ── -->
+  <div style="background:#fff;border:1px solid var(--rule);border-radius:8px;padding:12px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+    <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;">🔍 Filter:</div>
+    <div style="display:flex;align-items:center;gap:5px;">
+      <label style="font-size:11px;font-weight:600;color:var(--muted);">Kategori</label>
+      <select id="filterCategory" onchange="applyDefectFilter()" style="font-size:12px;font-weight:600;border:1.5px solid var(--rule);border-radius:5px;padding:5px 10px;font-family:inherit;background:#fff;cursor:pointer;">
+        <option value="">Semua Kategori</option>
+        <option>HVAC</option><option>TRANSFORMER</option><option>GENERATOR</option>
+        <option>AC SPLIT</option><option>LPS</option><option>MOTOR</option>
+        <option>MCC</option><option>UPS &amp; BATTERY</option><option>SUPPORT EQUIPMENT</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;">
+      <label style="font-size:11px;font-weight:600;color:var(--muted);">Status</label>
+      <select id="filterStatus" onchange="applyDefectFilter()" style="font-size:12px;font-weight:600;border:1.5px solid var(--rule);border-radius:5px;padding:5px 10px;font-family:inherit;background:#fff;cursor:pointer;">
+        <option value="">Semua Status</option>
+        <option>Open</option><option>In Progress</option><option>Closed</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;">
+      <label style="font-size:11px;font-weight:600;color:var(--muted);">Criticality</label>
+      <select id="filterCriticality" onchange="applyDefectFilter()" style="font-size:12px;font-weight:600;border:1.5px solid var(--rule);border-radius:5px;padding:5px 10px;font-family:inherit;background:#fff;cursor:pointer;">
+        <option value="">Semua</option>
+        <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;">
+      <label style="font-size:11px;font-weight:600;color:var(--muted);">Area</label>
+      <select id="filterArea" onchange="applyDefectFilter()" style="font-size:12px;font-weight:600;border:1.5px solid var(--rule);border-radius:5px;padding:5px 10px;font-family:inherit;background:#fff;cursor:pointer;">
+        <option value="">West &amp; East</option>
+        <option value="West">West saja</option><option value="East">East saja</option>
+      </select>
+    </div>
+    <button onclick="resetDefectFilter()" style="font-size:11px;padding:5px 12px;border:1px solid var(--rule);background:#f5f5f5;border-radius:5px;cursor:pointer;font-family:inherit;font-weight:600;color:var(--muted);">✕ Reset</button>
+    <div style="margin-left:auto;font-size:11px;color:var(--muted);">
+      Menampilkan: <strong id="defFilterCount">0</strong> dari <strong id="defTotalCount">0</strong> defect
+    </div>
+  </div>
+
+  <!-- ── SUMMARY CARDS ── -->
+  <div class="def-sum-strip" id="defSummaryAll">
+    <div class="def-sum-card ds-total"><div class="def-sum-num" id="defStatTotal">0</div><div class="def-sum-lbl">Total Defect</div></div>
+    <div class="def-sum-card ds-open"><div class="def-sum-num" id="defStatOpen">0</div><div class="def-sum-lbl">Open</div></div>
+    <div class="def-sum-card ds-prog"><div class="def-sum-num" id="defStatProg">0</div><div class="def-sum-lbl">In Progress</div></div>
+    <div class="def-sum-card ds-closed"><div class="def-sum-num" id="defStatClosed">0</div><div class="def-sum-lbl">Closed</div></div>
+  </div>
+
+  <!-- ── CHARTS ── -->
+  <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;margin-bottom:18px;">
+    <div style="background:#fff;border:1px solid var(--rule);border-radius:8px;padding:14px;">
+      <div style="font-size:11.5px;font-weight:700;color:var(--ink);margin-bottom:10px;">📊 Defect per Kategori</div>
+      <canvas id="chartDefCat" height="200"></canvas>
+    </div>
+    <div style="background:#fff;border:1px solid var(--rule);border-radius:8px;padding:14px;">
+      <div style="font-size:11.5px;font-weight:700;color:var(--ink);margin-bottom:10px;">🎯 Status Defect</div>
+      <canvas id="chartDefStatus" height="200"></canvas>
+    </div>
+    <div style="background:#fff;border:1px solid var(--rule);border-radius:8px;padding:14px;">
+      <div style="font-size:11.5px;font-weight:700;color:var(--ink);margin-bottom:10px;">⚡ Defect per Criticality</div>
+      <canvas id="chartDefCrit" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- ── TOGGLE + AREA SELECTOR ── -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+    <div class="def-toggle-bar">
+      <input type="checkbox" id="showClosedDefects" onchange="toggleClosedDefects()">
+      <label for="showClosedDefects">Tampilkan yang sudah Closed</label>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+      Tambah ke Area:
+      <select id="defAddArea" style="font-size:12px;font-weight:700;border:1px solid var(--rule);border-radius:4px;padding:4px 8px;font-family:inherit;">
+        <option value="west">West Area</option>
+        <option value="east">East Area</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ── AREA TABS ── -->
+  <div style="background:#fff;border:1px solid var(--rule);border-radius:10px 10px 0 0;">
+    <div class="defect-area-tabs" style="padding:0 20px;border-bottom:2px solid var(--rule);">
+      <button class="defect-area-btn active" id="darea-west" onclick="switchDefectArea('west')">
+        🌐 West Area <span id="defBadgeWest" style="background:#dde5ea;color:#555;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:4px;">0</span>
+      </button>
+      <button class="defect-area-btn" id="darea-east" onclick="switchDefectArea('east')">
+        🌐 East Area <span id="defBadgeEast" style="background:#dde5ea;color:#555;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:4px;">0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- West Panel -->
+  <div class="defect-area-panel active" id="defpanel-west">
+    <div class="defect-tbl-wrap">
+      <table class="defect-tbl" id="defTbl-west">
+        <thead>
+          <tr class="th-group">
+            <th rowspan="2" style="width:36px;">NO</th>
+            <th rowspan="2" style="width:70px;">AREA</th>
+            <th rowspan="2" style="width:110px;">FLOW STATION</th>
+            <th rowspan="2" style="width:120px;">CATEGORY</th>
+            <th rowspan="2" style="width:70px;">CRITICALITY</th>
+            <th rowspan="2" style="width:110px;">TAG NUMBER</th>
+            <th rowspan="2" style="width:100px;">DEFECT DATE</th>
+            <th rowspan="2" style="width:100px;">DEFECT REPORTED</th>
+            <th rowspan="2" style="min-width:180px;">DEFECT FINDING</th>
+            <th colspan="3">FOLLOW-UP</th>
+            <th colspan="4">MATERIAL DELIVERED</th>
+            <th colspan="3">WORK ORDER</th>
+            <th rowspan="2" style="min-width:160px;">REMARKS</th>
+            <th rowspan="2" style="width:32px;" class="no-print"></th>
+          </tr>
+          <tr class="th-cols">
+            <th style="min-width:170px;">ACTION PLAN</th>
+            <th style="min-width:130px;">FOLLOW UP MONITORING</th>
+            <th style="width:95px;">STATUS</th>
+            <th style="width:105px;">COMPLETE (DATE)</th>
+            <th style="min-width:140px;">MATERIALS</th>
+            <th style="width:50px;">QTY</th>
+            <th style="width:55px;">UOM</th>
+            <th style="width:85px;">MAT. STATUS</th>
+            <th style="width:85px;">No CE#</th>
+            <th style="width:85px;">RO#</th>
+          </tr>
+        </thead>
+        <tbody id="defBody-west"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- East Panel -->
+  <div class="defect-area-panel" id="defpanel-east">
+    <div class="defect-tbl-wrap">
+      <table class="defect-tbl" id="defTbl-east">
+        <thead>
+          <tr class="th-group">
+            <th rowspan="2" style="width:36px;">NO</th>
+            <th rowspan="2" style="width:70px;">AREA</th>
+            <th rowspan="2" style="width:110px;">FLOW STATION</th>
+            <th rowspan="2" style="width:120px;">CATEGORY</th>
+            <th rowspan="2" style="width:70px;">CRITICALITY</th>
+            <th rowspan="2" style="width:110px;">TAG NUMBER</th>
+            <th rowspan="2" style="width:100px;">DEFECT DATE</th>
+            <th rowspan="2" style="width:100px;">DEFECT REPORTED</th>
+            <th rowspan="2" style="min-width:180px;">DEFECT FINDING</th>
+            <th colspan="3">FOLLOW-UP</th>
+            <th colspan="4">MATERIAL DELIVERED</th>
+            <th colspan="3">WORK ORDER</th>
+            <th rowspan="2" style="min-width:160px;">REMARKS</th>
+            <th rowspan="2" style="width:32px;" class="no-print"></th>
+          </tr>
+          <tr class="th-cols">
+            <th style="min-width:170px;">ACTION PLAN</th>
+            <th style="min-width:130px;">FOLLOW UP MONITORING</th>
+            <th style="width:95px;">STATUS</th>
+            <th style="width:105px;">COMPLETE (DATE)</th>
+            <th style="min-width:140px;">MATERIALS</th>
+            <th style="width:50px;">QTY</th>
+            <th style="width:55px;">UOM</th>
+            <th style="width:85px;">MAT. STATUS</th>
+            <th style="width:85px;">No CE#</th>
+            <th style="width:85px;">RO#</th>
+          </tr>
+        </thead>
+        <tbody id="defBody-east"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="def-import-hint" style="margin-top:8px;">
+    💡 Format Excel import: No | Area (West/East) | Flow Station | Category | Criticality | Tag Number | Defect Date | Defect Reported | Defect Finding | Action Plan | Follow Up Monitoring | Status | Complete Date | Materials | Qty | UOM | Material Status | No CE# | RO# | Remarks
+  </p>
+
+</div>
+</div><!-- /page-defect -->
+
+<!-- ═══════════ MOB PLAN PAGE ═══════════ -->
+<div id="page-mob" class="tab-page">
+<div class="wrap">
+
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+    <div class="section-title"><span class="idx" style="background:#388e3c;">03</span> Monitoring Draft Mob Plan</div>
+    <div class="section-sub">Multi-periode Crew Change — klik tab periode untuk navigasi</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="mob-summary-strip" id="mobSummaryStrip">
+    <div class="mob-sum-card ms-total"><div class="mob-sum-num" id="mobStatTotal">0</div><div class="mob-sum-lbl">Total</div></div>
+    <div class="mob-sum-card ms-mob"><div class="mob-sum-num" id="mobStatMob">0</div><div class="mob-sum-lbl">Mobilized</div></div>
+    <div class="mob-sum-card ms-sub"><div class="mob-sum-num" id="mobStatSub">0</div><div class="mob-sum-lbl">Submission Plan</div></div>
+    <div class="mob-sum-card ms-plan"><div class="mob-sum-num" id="mobStatPlan">0</div><div class="mob-sum-lbl">Plan</div></div>
+    <div class="mob-sum-card ms-cancel"><div class="mob-sum-num" id="mobStatCancel">0</div><div class="mob-sum-lbl">Cancel</div></div>
+  </div>
+
+  <!-- Period Tabs -->
+  <div style="background:#fff;border:1px solid var(--rule);border-radius:10px 10px 0 0;overflow:hidden;">
+    <div class="mob-period-tabs" id="mobPeriodTabs">
+      <!-- period tabs injected here -->
+    </div>
+  </div>
+
+  <!-- Period Panels -->
+  <div class="mob-table-wrap" id="mobPeriodPanels">
+    <!-- panels injected here -->
+  </div>
+
+</div>
+</div><!-- /page-mob -->
+
+<div class="report-footer">
+  <span id="footerCompany">PT. Indokomas Buana Perkasa</span>
+  <span>Weekly Activity Report — Electrical PHE ONWJ</span>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════ */
+let crewGroupCounter = 0;
+let activityRowCounter = 0;
+let afhCardCounter = 0;
+
+const STATUS_OPTIONS = ['Plan','Complete','Inprogress','Cancel'];
+
+/* ════════════════════════════════════════════════════
+   CREW GROUP (Activity Table)
+════════════════════════════════════════════════════ */
+function addCrewGroup(titleVal) {
+  crewGroupCounter++;
+  const gid = 'cg' + crewGroupCounter;
+  const container = document.getElementById('crewGroupsContainer');
+
+  const group = document.createElement('div');
+  group.className = 'crew-group';
+  group.id = gid;
+  group.innerHTML = `
+    <div class="crew-group-header">
+      <div class="title-block">
+        <input class="cg-title" value="${titleVal || ''}" placeholder="Crew Change __ - __ BULAN YYYY">
+      </div>
+      <div class="crew-actions">
+        <button class="icon-btn danger" title="Hapus grup" onclick="deleteCrewGroup('${gid}')">✕</button>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table class="activity-table">
+        <colgroup>
+          <col class="col-no">
+          <col class="col-planunplan">
+          <col class="col-group">
+          <col class="col-description">
+          <col class="col-station">
+          <col class="col-duration">
+          <col class="col-start">
+          <col class="col-finish">
+          <col class="col-progress">
+          <col class="col-status">
+          <col class="col-pax">
+          <col class="col-personel">
+          <col class="col-remarks">
+          <col class="col-del">
+        </colgroup>
+        <thead>
+          <tr>
+            <th style="width:32px;">No</th>
+            <th style="width:80px;">Plan/Unplan</th>
+            <th style="width:130px;">Group</th>
+            <th style="min-width:220px;">Description</th>
+            <th style="width:110px;">Station</th>
+            <th style="width:60px;">Duration</th>
+            <th style="width:118px;">Start Date</th>
+            <th style="width:118px;">Finish Date</th>
+            <th style="width:110px;">Progress</th>
+            <th style="width:110px;">Status</th>
+            <th style="width:50px;">Pax</th>
+            <th style="min-width:150px;">Nama Personel</th>
+            <th style="min-width:200px;">Remarks</th>
+            <th style="width:32px;"></th>
+          </tr>
+        </thead>
+        <tbody id="${gid}-tbody"></tbody>
+      </table>
+    </div>
+    <div class="add-row-bar">
+      <button class="btn-add-row" onclick="addActivityRow('${gid}')">+ Tambah Baris Aktivitas</button>
+    </div>
+  `;
+  container.appendChild(group);
+  recalcSummary();
+  return gid;
+}
+
+function deleteCrewGroup(gid) {
+  if (!confirm('Hapus seluruh grup Crew Change ini beserta isinya?')) return;
+  const el = document.getElementById(gid);
+  if (el) el.remove();
+  recalcSummary();
+}
+
+const STATION_LIST = [
+  'Arco Prima','Bravo','Central Plant','Echo','Foxtrot','Uniform','Lima',
+  'KLA','PAPA','Mike-Mike','ZULU','MK','TP','Cilamaya','Balongan','MB2','Workshop'
+];
+
+function addActivityRow(gid, data) {
+  activityRowCounter++;
+  const tbody = document.getElementById(gid + '-tbody');
+  const rowNum = tbody.rows.length + 1;
+  const rid = 'row' + activityRowCounter;
+
+  const d = data || {};
+  const statusOpts = STATUS_OPTIONS.map(s => `<option value="${s}" ${d.status===s?'selected':''}>${s}</option>`).join('');
+  const stationOpts = '<option value="">— pilih —</option>' + STATION_LIST.map(s => `<option value="${s}" ${d.station===s?'selected':''}>${s}</option>`).join('');
+
+  const tr = document.createElement('tr');
+  tr.id = rid;
+  tr.innerHTML = `
+    <td class="mono" style="text-align:center;color:var(--muted);">${rowNum}</td>
+    <td><select class="cell-input center" onchange="recalcSummary()">
+        <option ${d.planUnplan==='Plan'||!d.planUnplan?'selected':''}>Plan</option>
+        <option ${d.planUnplan==='Unplan'?'selected':''}>Unplan</option>
+      </select></td>
+    <td><input class="cell-input" style="font-size:12.5px;" value="${d.group||'Electrical'}"></td>
+    <td>
+      <div class="desc-cell-wrap">
+        <textarea class="cell-input" rows="2" style="min-height:36px;">${d.description||''}</textarea>
+        <div class="desc-photos-grid" id="${rid}-desc-photos"></div>
+        <label class="desc-add-photo-label">
+          📷 Foto
+          <input type="file" accept="image/*" multiple onchange="addDescPhotos('${rid}', event)">
+        </label>
+        <div class="paste-hint">💡 Bisa copy-paste gambar langsung ke sini</div>
+      </div>
+    </td>
+    <td><select class="cell-input center">${stationOpts}</select></td>
+    <td><div class="duration-display" id="${rid}-duration">${d.duration||0}</div></td>
+    <td><input type="date" class="cell-input center" id="${rid}-start" value="${d.startDate||''}" onchange="calcDuration('${rid}')"></td>
+    <td><input type="date" class="cell-input center" id="${rid}-finish" value="${d.finishDate||''}" onchange="calcDuration('${rid}')"></td>
+    <td>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" style="width:${d.progress||0}%;"></div></div>
+        <input type="number" class="progress-pct-input" value="${d.progress||0}" min="0" max="100" oninput="updateProgressBar(this)">
+      </div>
+    </td>
+    <td><select class="status-select status-${d.status||'Plan'}" onchange="updateStatusStyle(this); recalcSummary();">${statusOpts}</select></td>
+    <td><input class="cell-input center" value="${d.pax||''}"></td>
+    <td><input class="cell-input" value="${d.personel||''}"></td>
+    <td>
+      <div style="display:flex;flex-direction:column;gap:3px;min-width:180px;">
+        <div class="act-checklist" id="${rid}-checklist"></div>
+        <button onclick="addActCheckItem('${rid}')" style="font-size:10px;font-weight:700;color:var(--steel);background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;padding:2px 0;">+ Tambah</button>
+      </div>
+    </td>
+    <td style="text-align:center;"><button class="row-del-btn" onclick="deleteActivityRow('${gid}','${rid}')">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+  if (d.startDate && d.finishDate) calcDuration(rid);
+  recalcSummary();
+}
+
+
+/* ════════════════════════════════════════
+   ACTIVITY ROW CHECKLIST
+════════════════════════════════════════ */
+function addActCheckItem(rid, text, checked) {
+  const container = document.getElementById(rid + '-checklist');
+  if (!container) return;
+  const item = document.createElement('div');
+  item.className = 'act-check-item';
+  const chkId = rid + '-chk' + Date.now();
+  item.innerHTML =
+    '<input type="checkbox" id="' + chkId + '" ' + (checked ? 'checked' : '') + ' onchange="toggleActCheck(this)">' +
+    '<textarea class="act-check-text' + (checked ? ' done' : '') + '" rows="1" placeholder="Keterangan...">' + (text||'') + '</textarea>' +
+    '<button class="act-check-del" onclick="this.closest(\'.act-check-item\').remove()" title="Hapus">✕</button>';
+  container.appendChild(item);
+  const ta = item.querySelector('textarea');
+  ta.addEventListener('input', () => { ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; });
+  if (text) setTimeout(() => { ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }, 30);
+  ta.focus();
+}
+
+function toggleActCheck(chk) {
+  const ta = chk.nextElementSibling;
+  if (ta) ta.classList.toggle('done', chk.checked);
+}
+
+/* ════════════════════════════════════════
+   DESCRIPTION CELL — PHOTO UPLOAD + PASTE
+════════════════════════════════════════ */
+function addDescPhotos(rid, event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  const MAX = 10 * 1024 * 1024;
+  files.forEach(file => {
+    if (file.size > MAX) { alert(file.name + ' melebihi 10MB, dilewati.'); return; }
+    const reader = new FileReader();
+    reader.onload = e => addDescPhotoItem(rid, e.target.result, '');
+    reader.readAsDataURL(file);
+  });
+  event.target.value = '';
+}
+
+function addDescPhotoItem(rid, src, caption) {
+  const grid = document.getElementById(rid + '-desc-photos') ||
+               document.getElementById(rid + '-photos');
+  if (!grid) return;
+  const pid = rid + '-dp' + Date.now() + Math.floor(Math.random()*1000);
+  const item = document.createElement('div');
+  item.className = 'desc-photo-item';
+  item.id = pid;
+  item.innerHTML =
+    '<button class="desc-photo-del" onclick="removeDescPhoto(\'' + pid + '\')" title="Hapus">✕</button>' +
+    '<img src="' + src + '" alt="foto">' +
+    '<textarea class="desc-photo-caption" placeholder="Keterangan foto...">' + (caption||'') + '</textarea>';
+  grid.appendChild(item);
+  const ta = item.querySelector('textarea');
+  ta.addEventListener('input', () => { ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; });
+  if (caption) setTimeout(() => { ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }, 50);
+}
+
+function removeDescPhoto(pid) {
+  const el = document.getElementById(pid);
+  if (!el) return;
+  el.style.opacity='0'; el.style.transition='opacity .15s';
+  setTimeout(() => el.remove(), 150);
+}
+
+/* ── Global paste handler: Ctrl+V image anywhere in weekly tab ── */
+document.addEventListener('paste', function(e) {
+  // Only handle if we're in the weekly activity page
+  if (!document.getElementById('page-weekly').classList.contains('active')) return;
+
+  const items = Array.from(e.clipboardData.items || []);
+  const imageItems = items.filter(item => item.type.startsWith('image/'));
+  if (!imageItems.length) return;
+
+  // Find the nearest focused desc-cell-wrap
+  const focused = document.activeElement;
+  const wrap = focused ? focused.closest('.desc-cell-wrap') : null;
+
+  imageItems.forEach(item => {
+    const file = item.getAsFile();
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      if (wrap) {
+        // Add to the wrap that has focus
+        const grid = wrap.querySelector('.desc-photos-grid');
+        if (grid) {
+          const rid = grid.id.replace('-desc-photos','').replace('-rem-photos','');
+          const suffix = grid.id.includes('-rem-') ? '-rem' : '';
+          addDescPhotoItem(rid + suffix, ev.target.result, '');
+        }
+      } else {
+        // No specific cell focused — show toast
+        showToast('Klik dulu di kolom Description atau Remarks yang ingin ditambahkan foto, lalu paste lagi');
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  if (imageItems.length > 0 && wrap) {
+    e.preventDefault();
+  }
+});
+
+function calcDuration(rid) {
+  const startEl = document.getElementById(rid + '-start');
+  const finishEl = document.getElementById(rid + '-finish');
+  const durEl = document.getElementById(rid + '-duration');
+  if (!startEl || !finishEl || !durEl) return;
+  if (startEl.value && finishEl.value) {
+    const start = new Date(startEl.value);
+    const finish = new Date(finishEl.value);
+    const diffMs = finish - start;
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+    durEl.textContent = diffDays >= 0 ? diffDays : '—';
+  } else {
+    durEl.textContent = '0';
+  }
+}
+
+function deleteActivityRow(gid, rid) {
+  const row = document.getElementById(rid);
+  if (row) row.remove();
+  // renumber
+  const tbody = document.getElementById(gid + '-tbody');
+  Array.from(tbody.rows).forEach((r, i) => { r.cells[0].textContent = i + 1; });
+  recalcSummary();
+}
+
+function updateProgressBar(input) {
+  let v = parseFloat(input.value) || 0;
+  v = Math.max(0, Math.min(100, v));
+  input.value = v;
+  const track = input.closest('.progress-wrap').querySelector('.progress-fill');
+  track.style.width = v + '%';
+}
+
+function updateStatusStyle(sel) {
+  sel.className = 'status-select status-' + sel.value;
+}
+
+/* ════════════════════════════════════════════════════
+   CONCERN / AFH CARDS
+════════════════════════════════════════════════════ */
+function addAfhCard(data) {
+  afhCardCounter++;
+  const cid = 'afh' + afhCardCounter;
+  const grid = document.getElementById('afhGrid');
+  const d = data || {};
+
+  const card = document.createElement('div');
+  card.className = 'afh-card severity-' + (d.severity || 'medium');
+  card.id = cid;
+  card.innerHTML = `
+    <div class="afh-card-top">
+      <select class="afh-badge-select sev-${d.severity||'medium'}" onchange="updateAfhSeverity('${cid}', this)">
+        <option value="high"   ${d.severity==='high'?'selected':''}>🔴 High</option>
+        <option value="medium" ${(!d.severity||d.severity==='medium')?'selected':''}>🟡 Medium</option>
+        <option value="low"    ${d.severity==='low'?'selected':''}>⚪ Low</option>
+      </select>
+      <input class="afh-input mono" style="width:90px;font-size:10.5px;padding:3px 6px;" placeholder="dd-mmm-yy" value="${d.date||''}">
+    </div>
+
+    <div class="afh-field-label">Lokasi / Station</div>
+    <input class="afh-input" placeholder="contoh: TP, MK, ZULU, PAPA" value="${d.location||''}">
+
+    <div class="afh-field-label">Deskripsi Concern / AFH</div>
+    <textarea class="afh-textarea" placeholder="Jelaskan temuan, kondisi, atau concern yang perlu di-highlight...">${d.description||''}</textarea>
+
+    <div class="afh-field-label">Rekomendasi / Tindak Lanjut</div>
+    <textarea class="afh-textarea" placeholder="Tindak lanjut yang disarankan...">${d.recommendation||''}</textarea>
+
+    <div class="afh-field-label">Foto Pendukung <span style="color:var(--muted);font-size:9px;font-weight:400;">(bisa lebih dari 1 foto + keterangan)</span></div>
+    <div class="afh-photo-zone" id="${cid}-photozone">
+      <div class="afh-photos-grid" id="${cid}-photos-grid"></div>
+      <label class="afh-upload-label">
+        📷 Tambah Foto
+        <input type="file" accept="image/*" multiple onchange="handleAfhPhotos('${cid}', event)">
+      </label>
+    </div>
+
+    <div class="afh-card-footer">
+      <select class="afh-status-badge st${(d.status||'Open')}" onchange="updateAfhStatus('${cid}', this)">
+        <option value="Open"   ${(!d.status||d.status==='Open')?'selected':''}>Open</option>
+        <option value="Follow" ${d.status==='Follow'?'selected':''}>Follow Up</option>
+        <option value="Closed" ${d.status==='Closed'?'selected':''}>Closed</option>
+      </select>
+      <button class="afh-del" onclick="deleteAfhCard('${cid}')">🗑 Hapus</button>
+    </div>
+  `;
+  grid.appendChild(card);
+  applyAfhVisibility(cid, d.status || 'Open');
+  recalcSummary();
+  return cid;
+}
+
+function updateAfhSeverity(cid, sel) {
+  const card = document.getElementById(cid);
+  card.className = 'afh-card severity-' + sel.value;
+  sel.className = 'afh-badge-select sev-' + sel.value;
+}
+
+function updateAfhStatus(cid, sel) {
+  sel.className = 'afh-status-badge st' + sel.value;
+  applyAfhVisibility(cid, sel.value);
+  updateAfhAllClosedMsg();
+}
+
+function applyAfhVisibility(cid, status) {
+  const card = document.getElementById(cid);
+  if (!card) return;
+  const showClosed = document.getElementById('showClosedAfh').checked;
+  if (status === 'Closed' && !showClosed) {
+    card.style.display = 'none';
+    card.dataset.hiddenClosed = '1';
+  } else {
+    card.style.display = '';
+    delete card.dataset.hiddenClosed;
+  }
+}
+
+function toggleClosedAfh() {
+  const showClosed = document.getElementById('showClosedAfh').checked;
+  document.querySelectorAll('.afh-card').forEach(card => {
+    const statusSel = card.querySelector('.afh-status-badge');
+    if (!statusSel) return;
+    if (statusSel.value === 'Closed') {
+      card.style.display = showClosed ? '' : 'none';
+    }
+  });
+  updateAfhAllClosedMsg();
+}
+
+function updateAfhAllClosedMsg() {
+  const showClosed = document.getElementById('showClosedAfh').checked;
+  const allCards = document.querySelectorAll('.afh-card');
+  const visibleCards = Array.from(allCards).filter(c => c.style.display !== 'none');
+  const msg = document.getElementById('afhAllClosedMsg');
+  if (!showClosed && allCards.length > 0 && visibleCards.length === 0) {
+    msg.style.display = 'block';
+  } else {
+    msg.style.display = 'none';
+  }
+}
+
+function deleteAfhCard(cid) {
+  if (!confirm('Hapus card concern ini?')) return;
+  const el = document.getElementById(cid);
+  if (el) el.remove();
+  updateAfhAllClosedMsg();
+  recalcSummary();
+}
+
+/* ════════════════════════════════════════════════════
+   MULTI-PHOTO HANDLER
+════════════════════════════════════════════════════ */
+function handleAfhPhotos(cid, event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+
+  const MAX_SIZE = 5 * 1024 * 1024; // 5MB per file
+  const grid = document.getElementById(cid + '-photos-grid');
+  if (!grid) return;
+
+  files.forEach(file => {
+    if (file.size > MAX_SIZE) {
+      alert(`File "${file.name}" melebihi 5MB, dilewati.`);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      addPhotoItem(cid, e.target.result, '');
+      updatePhotoCount(cid);
+    };
+    reader.readAsDataURL(file);
+  });
+  // reset input so same files can be added again if needed
+  event.target.value = '';
+}
+
+function addPhotoItem(cid, src, caption) {
+  const grid = document.getElementById(cid + '-photos-grid');
+  if (!grid) return;
+  const pid = cid + '-ph' + Date.now() + Math.floor(Math.random()*1000);
+  const item = document.createElement('div');
+  item.className = 'afh-photo-item';
+  item.id = pid;
+  item.innerHTML = `
+    <button class="afh-photo-del" onclick="removePhotoItem('${pid}')" title="Hapus foto">✕</button>
+    <img src="${src}" alt="foto concern">
+    <textarea class="afh-photo-caption" placeholder="Keterangan foto...">${caption}</textarea>
+  `;
+  grid.appendChild(item);
+  updatePhotoCount(cid);
+}
+
+function removePhotoItem(pid) {
+  const el = document.getElementById(pid);
+  if (!el) return;
+  // get cid from pid (format: afhN-phXXX)
+  const cid = pid.split('-ph')[0];
+  el.style.opacity = '0';
+  el.style.transition = 'opacity .15s';
+  setTimeout(() => { el.remove(); updatePhotoCount(cid); }, 150);
+}
+
+function updatePhotoCount(cid) {
+  const grid = document.getElementById(cid + '-photos-grid');
+  if (!grid) return;
+  const count = grid.querySelectorAll('.afh-photo-item').length;
+  // update label on the upload button
+  const zone = document.getElementById(cid + '-photozone');
+  if (!zone) return;
+  const label = zone.querySelector('.afh-upload-label');
+  if (label) {
+    const span = label.querySelector('span') || label;
+    const textNode = Array.from(label.childNodes).find(n => n.nodeType === 3);
+    if (textNode) textNode.textContent = count > 0 ? `📷 Tambah Foto Lagi` : `📷 Tambah Foto`;
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   SUMMARY CALCULATION
+════════════════════════════════════════════════════ */
+function recalcSummary() {
+  let total = 0, complete = 0, inprogress = 0, cancel = 0;
+  document.querySelectorAll('.status-select').forEach(sel => {
+    total++;
+    if (sel.value === 'Complete') complete++;
+    else if (sel.value === 'Inprogress') inprogress++;
+    else if (sel.value === 'Cancel') cancel++;
+  });
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statComplete').textContent = complete;
+  document.getElementById('statInprogress').textContent = inprogress;
+  document.getElementById('statCancel').textContent = cancel;
+  document.getElementById('statAfh').textContent = document.querySelectorAll('.afh-card').length;
+}
+
+/* ════════════════════════════════════════════════════
+   COMPANY SELECTOR SYNC
+════════════════════════════════════════════════════ */
+document.getElementById('companySelect').addEventListener('change', function() {
+  document.getElementById('footerCompany').textContent = this.value;
+});
+
+/* ════════════════════════════════════════════════════
+   ARCHIVE — Year / Month selector
+════════════════════════════════════════════════════ */
+function initArchiveSelectors() {
+  const yearSel = document.getElementById('archiveYear');
+  const monthSel = document.getElementById('archiveMonth');
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear - 1; y <= currentYear + 3; y++) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    if (y === currentYear) opt.selected = true;
+    yearSel.appendChild(opt);
+  }
+
+  months.forEach((m, i) => {
+    const opt = document.createElement('option');
+    opt.value = i + 1; opt.textContent = m;
+    if (i === new Date().getMonth()) opt.selected = true;
+    monthSel.appendChild(opt);
+  });
+}
+
+function getArchiveKey() {
+  const y = document.getElementById('archiveYear').value;
+  const m = document.getElementById('archiveMonth').value;
+  return `war_${y}_${String(m).padStart(2,'0')}`;
+}
+
+function onArchiveChange() {
+  // Just updates the label context; actual data stays in current DOM
+  // unless user explicitly saves/loads per period via Save/Load HTML.
+  const y = document.getElementById('archiveYear').value;
+  const m = document.getElementById('archiveMonth').selectedOptions[0].textContent;
+  showToast(`Periode aktif: ${m} ${y} — gunakan Simpan HTML untuk menyimpan sebagai arsip periode ini`);
+}
+
+/* ════════════════════════════════════════════════════
+   EXPORT EXCEL — mirrors original OTM format
+════════════════════════════════════════════════════ */
+function exportExcel() {
+  try {
+    const wb = XLSX.utils.book_new();
+    const rows = [];
+
+    const yearVal  = document.getElementById('archiveYear').value;
+    const monthLbl = document.getElementById('archiveMonth').selectedOptions[0].textContent;
+    const updateDate = document.getElementById('reportUpdateDate').value || '';
+
+    // Title rows
+    rows.push(['', 'OTM WEEKLY ACTIVITY STATUS REPORT']);
+    rows.push(['', 'Periode', `${monthLbl} ${yearVal}`]);
+    rows.push(['', 'Update', updateDate]);
+    rows.push([]);
+    rows.push(['', '', '', '', '', '', '', '', 'Activity']);
+    rows.push(['', '', '', '', '', '', '', '', 'No','Plan / Unplan','Group','Description','Station','Duration','Start Date','Finish date','Progress (%)','Status','Total Pax','Nama Personel','Remarks']);
+
+    document.querySelectorAll('.crew-group').forEach(group => {
+      const titleInput = group.querySelector('.cg-title');
+      if (!titleInput) return; // skip AFH section (different markup)
+      const title = titleInput.value || '(Crew Change belum diberi nama)';
+      rows.push(['', '', '', '', '', '', '', '', '', '', '', title]);
+
+      const tbody = group.querySelector('tbody');
+      if (!tbody) return;
+      Array.from(tbody.rows).forEach(tr => {
+        const cells = tr.querySelectorAll('td');
+        const no = cells[0].textContent.trim();
+        const planUnplan = cells[1].querySelector('select').value;
+        const grp = cells[2].querySelector('input').value;
+        const desc = cells[3].querySelector('textarea').value;
+        const station = cells[4].querySelector('select').value;
+        const duration = cells[5].querySelector('.duration-display').textContent;
+        const start = cells[6].querySelector('input').value;
+        const finish = cells[7].querySelector('input').value;
+        const progress = cells[8].querySelector('.progress-pct-input').value;
+        const status = cells[9].querySelector('select').value;
+        const pax = cells[10].querySelector('input').value;
+        const personel = cells[11].querySelector('input').value;
+        const remarks = cells[12].querySelector('input').value;
+
+        rows.push(['', '', '', '', '', '', '', '',
+          no, planUnplan, grp, desc, station, duration,
+          start, finish, (progress ? (progress/100) : 0), status, pax, personel, remarks
+        ]);
+      });
+      rows.push([]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [
+      {wch:2},{wch:2},{wch:2},{wch:2},{wch:2},{wch:2},{wch:2},{wch:2},
+      {wch:5},{wch:12},{wch:12},{wch:40},{wch:12},{wch:9},
+      {wch:12},{wch:12},{wch:11},{wch:12},{wch:9},{wch:22},{wch:20}
+    ];
+    XLSX.utils.book_append_sheet(wb, ws, 'HIGHLIGHT');
+
+    // ── AFH Sheet ──
+    const afhRows = [
+      ['CONCERN / AREA FOR HIGHLIGHT (AFH)'],
+      [],
+      ['No','Severity','Tanggal','Lokasi','Deskripsi','Rekomendasi','Status']
+    ];
+    document.querySelectorAll('.afh-card').forEach((card, i) => {
+      const sevSel = card.querySelector('.afh-badge-select');
+      const dateInp = card.querySelectorAll('.afh-input')[0];
+      const locInp  = card.querySelectorAll('.afh-input')[1];
+      const textareas = card.querySelectorAll('.afh-textarea');
+      const statusSel = card.querySelector('.afh-status-badge');
+      afhRows.push([
+        i+1,
+        sevSel ? sevSel.selectedOptions[0].textContent : '',
+        dateInp ? dateInp.value : '',
+        locInp ? locInp.value : '',
+        textareas[0] ? textareas[0].value : '',
+        textareas[1] ? textareas[1].value : '',
+        statusSel ? statusSel.value : ''
+      ]);
+    });
+    const wsAfh = XLSX.utils.aoa_to_sheet(afhRows);
+    wsAfh['!cols'] = [{wch:4},{wch:10},{wch:12},{wch:14},{wch:40},{wch:40},{wch:10}];
+    XLSX.utils.book_append_sheet(wb, wsAfh, 'CONCERN-AFH');
+
+    const now = new Date();
+    const ts = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
+    XLSX.writeFile(wb, `WAR_${monthLbl}_${yearVal}_${ts}.xlsx`);
+    showToast('Excel berhasil diexport!');
+  } catch(e) {
+    alert('Gagal export Excel: ' + e.message);
+  }
+}
+
+
+function showToast(msg) {
+  const t = document.getElementById('saveToast');
+  t.textContent = '✓ ' + msg;
+  t.style.display = 'inline-flex';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+/* ════════════════════════════════════════════════════
+   PRINT
+════════════════════════════════════════════════════ */
+function doPrint() {
+  // Auto-expand all textareas so no text is clipped when printed
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight + 2) + 'px';
+  });
+
+  const tip = document.createElement('div');
+  tip.id = 'print-tip';
+  tip.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  tip.innerHTML = `
+    <div style="background:#fff;border-radius:10px;padding:24px 30px;max-width:440px;width:92%;box-shadow:0 12px 40px rgba(0,0,0,.4);font-family:'Source Sans 3',sans-serif;">
+      <div style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:10px;">🖨 Sebelum Print</div>
+      <div style="font-size:11.5px;color:#666;line-height:1.7;margin-bottom:14px;">
+        Disarankan setting berikut di dialog print browser:<br>
+        • <strong>Layout: Landscape</strong> (agar semua kolom tabel muat)<br>
+        • <strong>Paper: A4</strong>, Scale: <strong>Fit to page</strong><br>
+        • Matikan <strong>Headers and footers</strong> (More settings)
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="document.getElementById('print-tip').remove()" style="padding:8px 16px;border:1px solid #ccc;background:#f5f5f5;border-radius:5px;cursor:pointer;font-size:12px;font-family:inherit;">Batal</button>
+        <button onclick="document.getElementById('print-tip').remove();window.print();" style="padding:8px 20px;border:none;background:#b3261e;color:#fff;border-radius:5px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;">Lanjut Print ▶</button>
+      </div>
+    </div>`;
+  document.body.appendChild(tip);
+}
+
+function saveHTML() {
+  try {
+    showToast('Menyiapkan file...');
+    const clone = document.documentElement.cloneNode(true);
+
+    // Embed input values
+    const origInputs = document.querySelectorAll('input');
+    const cloneInputs = clone.querySelectorAll('input');
+    origInputs.forEach((el, i) => {
+      if (!cloneInputs[i]) return;
+      if (el.type === 'file') return;
+      cloneInputs[i].setAttribute('value', el.value);
+    });
+
+    // Embed textarea values
+    const origTAs = document.querySelectorAll('textarea');
+    const cloneTAs = clone.querySelectorAll('textarea');
+    origTAs.forEach((el, i) => { if (cloneTAs[i]) cloneTAs[i].textContent = el.value; });
+
+    // Embed select values
+    const origSels = document.querySelectorAll('select');
+    const cloneSels = clone.querySelectorAll('select');
+    origSels.forEach((sel, i) => {
+      if (!cloneSels[i]) return;
+      cloneSels[i].querySelectorAll('option').forEach(opt => {
+        if (opt.value === sel.value) opt.setAttribute('selected','selected');
+        else opt.removeAttribute('selected');
+      });
+    });
+
+    // Embed dynamic counters as data attributes on body for restore
+    clone.querySelector('body').setAttribute('data-crew-counter', crewGroupCounter);
+    clone.querySelector('body').setAttribute('data-row-counter', activityRowCounter);
+    clone.querySelector('body').setAttribute('data-afh-counter', afhCardCounter);
+
+    const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const now = new Date();
+    const ts = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '_' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+    a.href = url;
+    a.download = 'weekly_activity_report_' + ts + '.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('File HTML berhasil disimpan!');
+  } catch(e) {
+    alert('Gagal menyimpan: ' + e.message);
+  }
+}
+
+function loadHTML(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  showToast('Membuka file...');
+  const url = URL.createObjectURL(file);
+  setTimeout(() => { window.location.href = url; }, 500);
+  event.target.value = '';
+}
+
+/* ════════════════════════════════════════════════════
+   INIT — seed with example structure (empty, ready to fill)
+════════════════════════════════════════════════════ */
+function init() {
+  initArchiveSelectors();
+
+  // Check if this is a loaded file with existing crew-group/afh-card elements
+  const existingGroups = document.querySelectorAll('.crew-group .activity-table');
+  if (existingGroups.length > 0) {
+    // Already has content from saved HTML — recalc durations + summary
+    document.querySelectorAll('tbody[id$="-tbody"] tr').forEach(tr => {
+      if (tr.id) calcDuration(tr.id);
+    });
+    // Apply closed-AFH visibility for cards present in static markup
+    document.querySelectorAll('.afh-card').forEach(card => {
+      const statusSel = card.querySelector('.afh-status-badge');
+      if (statusSel) applyAfhVisibility(card.id, statusSel.value);
+    });
+    updateAfhAllClosedMsg();
+    recalcSummary();
+    return;
+  }
+
+  // Fresh start — seed with one empty crew group + empty AFH + empty Mob period
+  const gid = addCrewGroup('Crew Change __ - __ BULAN 2026');
+  addActivityRow(gid);
+  addAfhCard();
+  const mpid = addMobPeriod('15 - 23 Juni 2026');
+  addMobRow(mpid);
+  addMcuRow();
+}
+
+window.addEventListener('DOMContentLoaded', () => { init(); setTimeout(recalcAfhSummary, 200); });
+
+// Fallback: auto-expand textareas on browser print (Ctrl+P) too
+window.addEventListener('beforeprint', function() {
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight + 2) + 'px';
+  });
+});
+
+/* ════════════════════════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════════════════════════ */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const page = document.getElementById('page-' + tab);
+  const btn  = document.getElementById('tab-' + tab);
+  if (page) page.classList.add('active');
+  if (btn)  btn.classList.add('active');
+
+  const titleEl      = document.getElementById('topbarTitle');
+  const actionWeekly = document.getElementById('action-weekly');
+  const actionAfh    = document.getElementById('action-afh');
+  const actionMob    = document.getElementById('action-mob');
+
+  // Hide all action groups first
+  if (actionWeekly) actionWeekly.style.display = 'none';
+  if (actionAfh)    actionAfh.style.display    = 'none';
+  if (actionMob)    actionMob.style.display     = 'none';
+  const actionDef2 = document.getElementById('action-defect');
+  if (actionDef2)   actionDef2.style.display    = 'none';
+  const actionMcu2 = document.getElementById('action-mcu');
+  if (actionMcu2)   actionMcu2.style.display    = 'none';
+
+  if (tab === 'weekly') {
+    if (titleEl) titleEl.textContent = 'Weekly Activity Status Report';
+    if (actionWeekly) actionWeekly.style.display = 'flex';
+  } else if (tab === 'afh') {
+    if (titleEl) titleEl.textContent = 'Monitoring Ask For Help (AFH)';
+    if (actionAfh) actionAfh.style.display = 'flex';
+    recalcAfhSummary();
+  } else if (tab === 'mob') {
+    if (titleEl) titleEl.textContent = 'Monitoring Draft Mob Plan';
+    if (actionMob) actionMob.style.display = 'flex';
+    recalcMobSummary();
+  } else if (tab === 'defect') {
+    if (titleEl) titleEl.textContent = 'Monitoring Defect';
+    const actionDef = document.getElementById('action-defect');
+    if (actionDef) actionDef.style.display = 'flex';
+    recalcDefectSummary();
+  } else if (tab === 'mcu') {
+    if (titleEl) titleEl.textContent = 'MCU & Training Monitoring';
+    const actionMcu = document.getElementById('action-mcu');
+    if (actionMcu) actionMcu.style.display = 'flex';
+    refreshMcuStatus();
+    recalcMcuStatus();
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   ASK FOR HELP TABLE
+════════════════════════════════════════════════════ */
+let afhRowCounter = 0;
+
+function addAfhRow(data) {
+  afhRowCounter++;
+  const tbody = document.getElementById('afhTableBody');
+  const rowNum = tbody ? tbody.rows.length + 1 : afhRowCounter;
+  const rid = 'afhrow' + afhRowCounter;
+  const d = data || {};
+
+  const statusVal = d.status || 'Open';
+  const rowClass = statusVal === 'Close' ? 'row-closed' + (document.getElementById('showClosedRows')?.checked ? '' : ' hidden-closed')
+                 : statusVal === 'In Progress' ? 'row-inprogress' : 'row-open';
+
+  const tr = document.createElement('tr');
+  tr.id = rid;
+  tr.className = rowClass;
+
+  const pillClass = statusVal === 'Close' ? 'pill-close' : statusVal === 'In Progress' ? 'pill-inprogress' : 'pill-open';
+
+  tr.innerHTML = `
+    <td class="center mono" style="text-align:center;font-size:11px;color:var(--muted);">${rowNum}</td>
+    <td><input class="afh-tbl-input" value="${d.area||''}" placeholder="Area"></td>
+    <td><textarea class="afh-tbl-input" rows="3" placeholder="Detail kebutuhan / order...">${d.detail||''}</textarea></td>
+    <td><input class="afh-tbl-input" value="${d.qty||'1 LOT'}" style="text-align:center;width:100%;"></td>
+    <td><input type="date" class="afh-tbl-input" value="${d.tglRequest||''}" style="font-family:monospace;font-size:11px;"></td>
+    <td><input class="afh-tbl-input" value="${d.requestor||''}" placeholder="Nama"></td>
+    <td><input type="date" class="afh-tbl-input" value="${d.targetCompletion||''}" style="font-family:monospace;font-size:11px;"></td>
+    <td><input class="afh-tbl-input" value="${d.reffCost||''}" placeholder="IDR..."></td>
+    <td><input class="afh-tbl-input" value="${d.reffRO||''}" placeholder="No. RO"></td>
+    <td>
+      <select class="afh-status-pill ${pillClass}" onchange="updateAfhRowStatus('${rid}', this)">
+        <option value="Open" ${statusVal==='Open'?'selected':''}>Open</option>
+        <option value="In Progress" ${statusVal==='In Progress'?'selected':''}>In Progress</option>
+        <option value="Close" ${statusVal==='Close'?'selected':''}>Close</option>
+      </select>
+    </td>
+    <td>
+      <div class="afh-tbl-remarks">
+        <div id="${rid}-remarks"></div>
+        <button class="afh-add-remark" onclick="addAfhRemark('${rid}')">+ Tambah keterangan</button>
+      </div>
+    </td>
+    <td class="no-print" style="text-align:center;">
+      <button class="afh-tbl-del" onclick="deleteAfhRow('${rid}')">✕</button>
+    </td>
+  `;
+
+  if (tbody) tbody.appendChild(tr);
+
+  // Restore saved remarks
+  if (d.remarks && d.remarks.length) {
+    d.remarks.forEach(r => addAfhRemark(rid, r));
+  } else if (!d.remarks) {
+    addAfhRemark(rid, '');
+  }
+
+  recalcAfhSummary();
+  return rid;
+}
+
+function addAfhRemark(rid, text) {
+  const container = document.getElementById(rid + '-remarks');
+  if (!container) return;
+  const n = container.querySelectorAll('.afh-remarks-item').length + 1;
+  const item = document.createElement('div');
+  item.className = 'afh-remarks-item';
+  item.innerHTML = `
+    <span class="afh-remarks-num">${n}.</span>
+    <textarea class="afh-remarks-text" rows="1" placeholder="Keterangan...">${text||''}</textarea>
+    <button class="afh-remarks-del" onclick="deleteAfhRemark(this)" title="Hapus">✕</button>
+  `;
+  container.appendChild(item);
+  // Auto-grow textarea
+  const ta = item.querySelector('textarea');
+  ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = (ta.scrollHeight) + 'px'; });
+  if (text) { setTimeout(() => { ta.style.height = 'auto'; ta.style.height = (ta.scrollHeight) + 'px'; }, 50); }
+}
+
+function deleteAfhRemark(btn) {
+  const item = btn.closest('.afh-remarks-item');
+  if (item) {
+    const container = item.parentElement;
+    item.remove();
+    // Renumber
+    container.querySelectorAll('.afh-remarks-num').forEach((n, i) => n.textContent = (i+1) + '.');
+  }
+}
+
+function updateAfhRowStatus(rid, sel) {
+  sel.className = 'afh-status-pill ' + (sel.value === 'Close' ? 'pill-close' : sel.value === 'In Progress' ? 'pill-inprogress' : 'pill-open');
+  const tr = document.getElementById(rid);
+  if (!tr) return;
+  tr.className = sel.value === 'Close'
+    ? 'row-closed' + (document.getElementById('showClosedRows')?.checked ? '' : ' hidden-closed')
+    : sel.value === 'In Progress' ? 'row-inprogress' : 'row-open';
+  recalcAfhSummary();
+  updateAfhAllClosedNotice();
+}
+
+function deleteAfhRow(rid) {
+  if (!confirm('Hapus baris Ask For Help ini?')) return;
+  const tr = document.getElementById(rid);
+  if (!tr) return;
+  tr.style.opacity = '0'; tr.style.transition = 'opacity .2s';
+  setTimeout(() => {
+    tr.remove();
+    // Renumber
+    document.querySelectorAll('#afhTableBody tr').forEach((r, i) => r.cells[0].textContent = i + 1);
+    recalcAfhSummary();
+  }, 200);
+}
+
+function toggleClosedRows() {
+  const show = document.getElementById('showClosedRows').checked;
+  document.querySelectorAll('.row-closed').forEach(tr => {
+    if (show) tr.classList.remove('hidden-closed');
+    else tr.classList.add('hidden-closed');
+  });
+  updateAfhAllClosedNotice();
+}
+
+function updateAfhAllClosedNotice() {
+  // could add a notice like weekly AFH section if needed
+}
+
+function recalcAfhSummary() {
+  let total = 0, open = 0, prog = 0, close = 0;
+  document.querySelectorAll('#afhTableBody tr').forEach(tr => {
+    total++;
+    const sel = tr.querySelector('.afh-status-pill');
+    if (!sel) return;
+    if (sel.value === 'Open') open++;
+    else if (sel.value === 'In Progress') prog++;
+    else if (sel.value === 'Close') close++;
+  });
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('afhStatTotal', total);
+  set('afhStatOpen', open);
+  set('afhStatProg', prog);
+  set('afhStatClose', close);
+
+  const badge = document.getElementById('badge-afh');
+  if (badge) {
+    badge.textContent = open + prog;
+    badge.className = 'tab-badge ' + ((open + prog) > 0 ? 'amber' : 'green');
+  }
+  const badgeW = document.getElementById('badge-weekly');
+  if (badgeW) {
+    badgeW.textContent = document.querySelectorAll('.status-select').length;
+  }
+
+  // Sync company sub
+  const comp = document.getElementById('companySelect');
+  const sub = document.getElementById('afh-company-sub');
+  if (comp && sub) sub.textContent = comp.value.replace('PT. ', '') + ' — PHE ONWJ';
+}
+
+/* Override exportExcel to include AFH sheet */
+const _origExport = exportExcel;
+function exportExcel() {
+  _origExport();
+}
+
+
+/* ════════════════════════════════════════════════════
+   MOB PLAN — Multi-periode
+════════════════════════════════════════════════════ */
+let mobPeriodCounter = 0;
+let mobRowCounter = 0;
+let activeMobPeriod = null;
+
+const MOB_STATUS_OPTIONS = [
+  { val: 'Mobilized',       cls: 'mpill-mob',  label: 'Mobilized' },
+  { val: 'Submission Plan', cls: 'mpill-sub',  label: 'Submission Plan' },
+  { val: 'Plan',            cls: 'mpill-plan', label: 'Plan' },
+  { val: 'Cancel',          cls: 'mpill-can',  label: 'Cancel' },
+  { val: 'Done',            cls: 'mpill-done', label: 'Done' },
+];
+
+function addMobPeriod(titleVal) {
+  mobPeriodCounter++;
+  const pid = 'mobperiod' + mobPeriodCounter;
+  const tabsContainer   = document.getElementById('mobPeriodTabs');
+  const panelsContainer = document.getElementById('mobPeriodPanels');
+
+  // Tab button
+  const btn = document.createElement('button');
+  btn.className = 'mob-period-btn';
+  btn.id = 'mobptab-' + pid;
+  btn.innerHTML = `<input class="mob-input" value="${titleVal || ''}" placeholder="15 - 23 Juni 2026" 
+    style="background:transparent;font-size:12px;font-weight:700;color:inherit;min-width:130px;cursor:text;"
+    onclick="event.stopPropagation()"
+    onblur="event.stopPropagation()">
+    <button onclick="event.stopPropagation();deleteMobPeriod('${pid}')" 
+      style="background:none;border:none;color:#bbb;font-size:11px;cursor:pointer;padding:0 0 0 4px;line-height:1;"
+      title="Hapus periode">✕</button>`;
+  btn.onclick = () => switchMobPeriod(pid);
+
+  // Panel
+  const panel = document.createElement('div');
+  panel.className = 'mob-period-panel';
+  panel.id = 'mobpanel-' + pid;
+  panel.innerHTML = `
+    <div style="overflow-x:auto;">
+      <table class="mob-tbl">
+        <thead>
+          <tr>
+            <th style="width:36px;">No</th>
+            <th style="min-width:220px;">Job Summary</th>
+            <th style="min-width:160px;">Personnel Name</th>
+            <th style="width:110px;">Position</th>
+            <th style="width:100px;">Mob Date</th>
+            <th style="width:100px;">Demob Date</th>
+            <th style="width:80px;">Work Duration (Day)</th>
+            <th style="width:130px;">Destination / Station</th>
+            <th style="width:110px;">Status</th>
+            <th style="min-width:240px;">Remarks</th>
+            <th style="width:32px;" class="no-print"></th>
+          </tr>
+        </thead>
+        <tbody id="${pid}-tbody"></tbody>
+      </table>
+    </div>
+    <div style="padding:10px 16px;border-top:1px dashed var(--rule);">
+      <button class="mob-add-remark" onclick="addMobRow('${pid}')" 
+        style="font-size:12px;color:var(--steel);font-weight:700;">+ Tambah Baris</button>
+    </div>
+  `;
+
+  tabsContainer.appendChild(btn);
+  panelsContainer.appendChild(panel);
+
+  switchMobPeriod(pid);
+  return pid;
+}
+
+function switchMobPeriod(pid) {
+  activeMobPeriod = pid;
+  document.querySelectorAll('.mob-period-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mob-period-panel').forEach(p => p.classList.remove('active'));
+  const btn = document.getElementById('mobptab-' + pid);
+  const panel = document.getElementById('mobpanel-' + pid);
+  if (btn) btn.classList.add('active');
+  if (panel) panel.classList.add('active');
+  recalcMobSummary();
+}
+
+function deleteMobPeriod(pid) {
+  if (!confirm('Hapus seluruh periode Crew Change ini beserta semua isinya?')) return;
+  const btn   = document.getElementById('mobptab-' + pid);
+  const panel = document.getElementById('mobpanel-' + pid);
+  if (btn)   btn.remove();
+  if (panel) panel.remove();
+  // switch to first available period
+  const firstBtn = document.querySelector('.mob-period-btn');
+  if (firstBtn) {
+    const firstPid = firstBtn.id.replace('mobptab-', '');
+    switchMobPeriod(firstPid);
+  }
+  recalcMobSummary();
+}
+
+function addMobRow(pid, data) {
+  mobRowCounter++;
+  const targetPid = pid || activeMobPeriod;
+  if (!targetPid) return;
+  const tbody = document.getElementById(targetPid + '-tbody');
+  if (!tbody) return;
+  const rowNum = tbody.rows.length + 1;
+  const rid = 'mobrow' + mobRowCounter;
+  const d = data || {};
+
+  const statusVal = d.status || 'Plan';
+  const rowClass  = getMobRowClass(statusVal);
+  const pillClass = getMobPillClass(statusVal);
+  const statusOpts = MOB_STATUS_OPTIONS.map(o =>
+    `<option value="${o.val}" ${d.status===o.val?'selected':''}>${o.label}</option>`
+  ).join('');
+
+  const tr = document.createElement('tr');
+  tr.id = rid;
+  tr.className = rowClass;
+  tr.innerHTML = `
+    <td style="text-align:center;font-size:11px;color:var(--muted);">${rowNum}</td>
+    <td><textarea class="mob-input" rows="3" placeholder="Job summary...">${d.jobSummary||''}</textarea></td>
+    <td><textarea class="mob-input" rows="3" placeholder="1. Nama&#10;2. Nama">${d.personnel||''}</textarea></td>
+    <td><textarea class="mob-input" rows="3" placeholder="PA Supervisor...">${d.position||''}</textarea></td>
+    <td><input type="date" class="mob-input" value="${d.mobDate||''}"></td>
+    <td><input type="date" class="mob-input" value="${d.demobDate||''}" oninput="calcMobDuration('${rid}')"></td>
+    <td><div id="${rid}-dur" style="text-align:center;font-weight:700;font-family:monospace;font-size:13px;color:var(--steel);">${d.duration||0}</div></td>
+    <td><input class="mob-input" value="${d.station||''}" placeholder="Station..."></td>
+    <td>
+      <select class="mob-status-pill ${pillClass}" onchange="updateMobRowStatus('${rid}',this)">
+        ${statusOpts}
+      </select>
+    </td>
+    <td>
+      <div class="mob-remarks-list" id="${rid}-remarks"></div>
+      <button class="mob-add-remark" onclick="addMobRemark('${rid}')">+ Tambah keterangan</button>
+    </td>
+    <td class="no-print" style="text-align:center;">
+      <button class="mob-del-btn" onclick="deleteMobRow('${targetPid}','${rid}')">✕</button>
+    </td>
+  `;
+
+  tbody.appendChild(tr);
+
+  // Wire up mob date change for duration
+  tr.querySelectorAll('input[type=date]').forEach(inp => {
+    inp.addEventListener('change', () => calcMobDuration(rid));
+  });
+
+  // Restore remarks
+  if (d.remarks && d.remarks.length) {
+    d.remarks.forEach(r => addMobRemark(rid, r.text, r.done));
+  } else if (!d.remarks) {
+    addMobRemark(rid, '', false);
+  }
+
+  if (d.mobDate && d.demobDate) calcMobDuration(rid);
+  recalcMobSummary();
+  return rid;
+}
+
+function calcMobDuration(rid) {
+  const tr = document.getElementById(rid);
+  if (!tr) return;
+  const dates = tr.querySelectorAll('input[type=date]');
+  const durEl = document.getElementById(rid + '-dur');
+  if (!dates[0] || !dates[1] || !durEl) return;
+  if (dates[0].value && dates[1].value) {
+    const diff = Math.round((new Date(dates[1].value) - new Date(dates[0].value)) / 86400000);
+    durEl.textContent = diff >= 0 ? diff : '—';
+  } else {
+    durEl.textContent = '0';
+  }
+}
+
+function addMobRemark(rid, text, done) {
+  const container = document.getElementById(rid + '-remarks');
+  if (!container) return;
+  const n = container.querySelectorAll('.mob-remark-row').length + 1;
+  const item = document.createElement('div');
+  item.className = 'mob-remark-row';
+  item.innerHTML = `
+    <span class="mob-remark-num">${n}.</span>
+    <input type="checkbox" class="mob-remark-chk" ${done?'checked':''} onchange="toggleMobRemark(this)">
+    <textarea class="mob-remark-txt${done?' done-remark':''}" rows="1" placeholder="Keterangan...">${text||''}</textarea>
+    <button class="mob-remark-del" onclick="deleteMobRemark(this)">✕</button>
+  `;
+  container.appendChild(item);
+  const ta = item.querySelector('textarea');
+  ta.addEventListener('input', () => { ta.style.height='auto'; ta.style.height=(ta.scrollHeight)+'px'; });
+  if (text) setTimeout(() => { ta.style.height='auto'; ta.style.height=(ta.scrollHeight)+'px'; }, 50);
+}
+
+function toggleMobRemark(chk) {
+  const ta = chk.nextElementSibling;
+  if (ta) ta.classList.toggle('done-remark', chk.checked);
+}
+
+function deleteMobRemark(btn) {
+  const row = btn.closest('.mob-remark-row');
+  if (!row) return;
+  const container = row.parentElement;
+  row.remove();
+  container.querySelectorAll('.mob-remark-num').forEach((n, i) => n.textContent = (i+1) + '.');
+}
+
+function deleteMobRow(pid, rid) {
+  const tr = document.getElementById(rid);
+  if (!tr) return;
+  tr.style.opacity='0'; tr.style.transition='opacity .2s';
+  setTimeout(() => {
+    tr.remove();
+    const tbody = document.getElementById(pid + '-tbody');
+    if (tbody) Array.from(tbody.rows).forEach((r,i) => r.cells[0].textContent = i+1);
+    recalcMobSummary();
+  }, 200);
+}
+
+function getMobRowClass(status) {
+  const map = {
+    'Mobilized':       'mob-row-mobilized',
+    'Submission Plan': 'mob-row-submission',
+    'Plan':            'mob-row-plan',
+    'Cancel':          'mob-row-cancel',
+    'Done':            'mob-row-plan',
+  };
+  return map[status] || 'mob-row-plan';
+}
+
+function getMobPillClass(status) {
+  const map = {
+    'Mobilized':       'mpill-mob',
+    'Submission Plan': 'mpill-sub',
+    'Plan':            'mpill-plan',
+    'Cancel':          'mpill-can',
+    'Done':            'mpill-done',
+  };
+  return map[status] || 'mpill-plan';
+}
+
+function updateMobRowStatus(rid, sel) {
+  sel.className = 'mob-status-pill ' + getMobPillClass(sel.value);
+  const tr = document.getElementById(rid);
+  if (tr) tr.className = getMobRowClass(sel.value);
+  recalcMobSummary();
+}
+
+function recalcMobSummary() {
+  let total=0, mob=0, sub=0, plan=0, cancel=0;
+  document.querySelectorAll('.mob-status-pill').forEach(sel => {
+    total++;
+    const v = sel.value;
+    if (v==='Mobilized') mob++;
+    else if (v==='Submission Plan') sub++;
+    else if (v==='Plan' || v==='Done') plan++;
+    else if (v==='Cancel') cancel++;
+  });
+  const s = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  s('mobStatTotal', total);
+  s('mobStatMob',   mob);
+  s('mobStatSub',   sub);
+  s('mobStatPlan',  plan);
+  s('mobStatCancel',cancel);
+  const badge = document.getElementById('badge-mob');
+  if (badge) { badge.textContent = total; }
+}
+
+
+/* ════════════════════════════════════════════════════
+   DEFECT MONITORING
+════════════════════════════════════════════════════ */
+let defRowCounter = 0;
+let activeDefectArea = 'west';
+
+function switchDefectArea(area) {
+  activeDefectArea = area;
+  document.querySelectorAll('.defect-area-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.defect-area-panel').forEach(p => p.classList.remove('active'));
+  const btn = document.getElementById('darea-' + area);
+  const panel = document.getElementById('defpanel-' + area);
+  if (btn) btn.classList.add('active');
+  if (panel) panel.classList.add('active');
+  // Update area selector
+  const sel = document.getElementById('defAddArea');
+  if (sel) sel.value = area;
+}
+
+function addDefectRow(area, data) {
+  defRowCounter++;
+  const targetArea = area || document.getElementById('defAddArea')?.value || 'west';
+  const tbody = document.getElementById('defBody-' + targetArea);
+  if (!tbody) return;
+  const rowNum = tbody.rows.length + 1;
+  const rid = 'defrow' + defRowCounter;
+  const d = data || {};
+  const status = d.status || 'Open';
+  const rowCls = status === 'Closed' ? 'def-closed' : status === 'In Progress' ? 'def-inprogress' : 'def-open';
+  const showClosed = document.getElementById('showClosedDefects')?.checked;
+
+  const tr = document.createElement('tr');
+  tr.id = rid;
+  tr.className = rowCls + (status === 'Closed' && !showClosed ? '' : status === 'Closed' ? ' show-closed' : '');
+
+  const statusOpts = ['Open','In Progress','Closed'].map(s =>
+    '<option value="' + s + '" ' + (status===s?'selected':'') + '>' + s + '</option>').join('');
+
+  const STATIONS = ["Arco Prima","Bravo","Central Plant","Echo","Foxtrot","Uniform","Lima","KLA","PAPA","Mike-Mike","ZULU","MK","TP","Cilamaya","Balongan","MB2","Workshop"];
+  const CATS     = ["HVAC","TRANSFORMER","GENERATOR","AC SPLIT","LPS","MOTOR","MCC","UPS & BATTERY","SUPPORT EQUIPMENT"];
+  const CRITS    = ["P1","P2","P3","P4"];
+
+  const mkOpts = (arr, val) => '<option value="">— Pilih —</option>' +
+    arr.map(x => '<option value="' + x + '" ' + (val===x?'selected':'') + '>' + x + '</option>').join('');
+
+  const areaOpts = '<option value="West" ' + ((d.area||'West')==='West'?'selected':'') + '>West</option>' +
+    '<option value="East" ' + (d.area==='East'?'selected':'') + '>East</option>';
+
+  tr.innerHTML =
+    '<td style="text-align:center;font-size:10px;color:var(--muted);">' + rowNum + '</td>' +
+    '<td><select class="def-input">' + areaOpts + '</select></td>' +
+    '<td><select class="def-input">' + mkOpts(STATIONS, d.flowStation) + '</select></td>' +
+    '<td><select class="def-input">' + mkOpts(CATS, d.category) + '</select></td>' +
+    '<td><select class="def-input">' + mkOpts(CRITS, d.criticality) + '</select></td>' +
+    '<td><input class="def-input" value="' + (d.tagNumber||'') + '" placeholder="TAG-001"></td>' +
+    '<td><input type="date" class="def-input" value="' + (d.defectDate||'') + '"></td>' +
+    '<td><input type="date" class="def-input" value="' + (d.defectReported||'') + '"></td>' +
+    '<td><textarea class="def-input" rows="3" placeholder="Deskripsi defect...">' + (d.defectFinding||'') + '</textarea></td>' +
+    '<td><textarea class="def-input" rows="3" placeholder="Action plan...">' + (d.actionPlan||'') + '</textarea></td>' +
+    '<td><textarea class="def-input" rows="3" placeholder="Follow up...">' + (d.followUp||'') + '</textarea></td>' +
+    '<td><select class="def-status-sel dst-' + status.toLowerCase().replace(' ','') + '" onchange="updateDefectStatus(\'' + rid + '\',this)">' + statusOpts + '</select></td>' +
+    '<td><input type="date" class="def-input" value="' + (d.completeDate||'') + '"></td>' +
+    '<td><textarea class="def-input" rows="2" placeholder="Material...">' + (d.materials||'') + '</textarea></td>' +
+    '<td><input class="def-input" value="' + (d.qty||'') + '" style="text-align:center;"></td>' +
+    '<td><input class="def-input" value="' + (d.uom||'') + '" placeholder="EA" style="text-align:center;"></td>' +
+    '<td><input class="def-input" value="' + (d.woStatus||'') + '" placeholder="Status..."></td>' +
+    '<td><input class="def-input" value="' + (d.noCE||'') + '" placeholder="CE-..."></td>' +
+    '<td><input class="def-input" value="' + (d.ro||'') + '" placeholder="RO-..."></td>' +
+    '<td><textarea class="def-input" rows="3" placeholder="Remarks...">' + (d.remarks||'') + '</textarea></td>' +
+    '<td class="no-print" style="text-align:center;"><button class="def-del-btn" onclick="deleteDefectRow(\'' + targetArea + '\',\'' + rid + '\')">✕</button></td>';
+
+  tbody.appendChild(tr);
+  recalcDefectSummary();
+  return rid;
+}
+
+
+function updateDefectStatus(rid, sel) {
+  const tr = document.getElementById(rid);
+  if (!tr) return;
+  const status = sel.value;
+  sel.className = 'def-status-sel dst-' + status.toLowerCase().replace(' ','');
+  const showClosed = document.getElementById('showClosedDefects')?.checked;
+  if (status === 'Closed') {
+    tr.className = 'def-closed' + (showClosed ? ' show-closed' : '');
+  } else {
+    tr.className = status === 'In Progress' ? 'def-inprogress' : 'def-open';
+  }
+  recalcDefectSummary();
+  checkAllDefectClosed();
+}
+
+function deleteDefectRow(area, rid) {
+  const tr = document.getElementById(rid);
+  if (!tr) return;
+  tr.style.opacity = '0'; tr.style.transition = 'opacity .2s';
+  setTimeout(() => {
+    tr.remove();
+    const tbody = document.getElementById('defBody-' + area);
+    if (tbody) Array.from(tbody.rows).forEach((r,i) => r.cells[0].textContent = i+1);
+    recalcDefectSummary();
+  }, 200);
+}
+
+function toggleClosedDefects() {
+  const show = document.getElementById('showClosedDefects').checked;
+  document.querySelectorAll('.def-closed').forEach(tr => {
+    if (show) tr.classList.add('show-closed');
+    else tr.classList.remove('show-closed');
+  });
+  checkAllDefectClosed();
+}
+
+function checkAllDefectClosed() {
+  // future: show notice if all items closed
+}
+
+function recalcDefectSummary() {
+  let total=0, open=0, prog=0, closed=0;
+  let west=0, east=0;
+  document.querySelectorAll('#defBody-west tr, #defBody-east tr').forEach(tr => {
+    total++;
+    const sel = tr.querySelector('.def-status-sel');
+    if (!sel) return;
+    if (sel.value === 'Open') open++;
+    else if (sel.value === 'In Progress') prog++;
+    else if (sel.value === 'Closed') closed++;
+  });
+  document.querySelectorAll('#defBody-west tr').forEach(() => west++);
+  document.querySelectorAll('#defBody-east tr').forEach(() => east++);
+  const s = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  s('defStatTotal', total);
+  s('defStatOpen', open);
+  s('defStatProg', prog);
+  s('defStatClosed', closed);
+  s('defBadgeWest', west);
+  s('defBadgeEast', east);
+  const badge = document.getElementById('badge-defect');
+  if (badge) { badge.textContent = open+prog; }
+}
+
+/* ── Excel Import ── */
+function importDefectExcel(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const area = document.getElementById('defAddArea')?.value || 'west';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      let rows = [];
+      if (file.name.endsWith('.csv')) {
+        const lines = e.target.result.split('\n').filter(l => l.trim());
+        const si = isNaN(lines[0].split(/[,;]/)[0].trim()) ? 1 : 0;
+        rows = lines.slice(si).map(l => l.split(/[,;]/).map(c => c.trim().replace(/^"|"$/g,'')));
+      } else {
+        const wb = XLSX.read(e.target.result, { type:'binary', cellDates:true });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const raw = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+        // Try to detect header row
+        const si = raw.findIndex(r => String(r[0]).toLowerCase().includes('no') || !isNaN(r[0])) + 1 || 1;
+        rows = raw.slice(si > 1 ? si : 1);
+      }
+      if (!rows.length) { alert('Tidak ada data.'); return; }
+      let added = 0;
+      rows.forEach(r => {
+        if (!r || r.length < 3 || (!r[1] && !r[2] && !r[4])) return;
+        const fmtDate = v => {
+          if (!v) return '';
+          if (v instanceof Date) return v.toISOString().split('T')[0];
+          const s = String(v).trim();
+          if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+          const d = new Date(s);
+          return isNaN(d) ? '' : d.toISOString().split('T')[0];
+        };
+        // Cols (updated — no Platform/WorkCenter):
+        // 0=No, 1=Area(West/East), 2=FlowStation, 3=Category, 4=Criticality,
+        // 5=TagNumber, 6=DefectDate, 7=DefectReported, 8=DefectFinding,
+        // 9=ActionPlan, 10=FollowUp, 11=Status, 12=CompleteDate,
+        // 13=Materials, 14=Qty, 15=UOM, 16=MatStatus, 17=NoCE, 18=RO, 19=Remarks
+        addDefectRow(area, {
+          area:          r[1]||'West',
+          flowStation:   r[2]||'',
+          category:      r[3]||'',
+          criticality:   r[4]||'',
+          tagNumber:     r[5]||'',
+          defectDate:    fmtDate(r[6]),
+          defectReported:fmtDate(r[7]),
+          defectFinding: r[8]||'',
+          actionPlan:    r[9]||'',
+          followUp:      r[10]||'',
+          status:        r[11]||'Open',
+          completeDate:  fmtDate(r[12]),
+          materials:     r[13]||'',
+          qty:           r[14]||'',
+          uom:           r[15]||'',
+          woStatus:      r[16]||'',
+          noCE:          r[17]||'',
+          ro:            r[18]||'',
+          remarks:       r[19]||''
+        });
+        added++;
+      });
+      switchDefectArea(area);
+      if (typeof showToast === 'function') showToast(`✓ ${added} baris defect diimport ke ${area === 'west' ? 'West' : 'East'} Area`);
+    } catch(err) {
+      alert('Gagal import: ' + err.message);
+    }
+  };
+  if (file.name.endsWith('.csv')) reader.readAsText(file);
+  else reader.readAsBinaryString(file);
+  event.target.value = '';
+}
+
+
+/* ════════════════════════════════════════════════════
+   DEFECT FILTER + CHARTS
+════════════════════════════════════════════════════ */
+const DEF_CATS = ['HVAC','TRANSFORMER','GENERATOR','AC SPLIT','LPS','MOTOR','MCC','UPS & BATTERY','SUPPORT EQUIPMENT'];
+const CAT_COLORS = ['#2196F3','#FF9800','#9C27B0','#00BCD4','#F44336','#4CAF50','#FF5722','#795548','#607D8B'];
+
+let defChartCat = null, defChartStatus = null, defChartCrit = null;
+
+function getDefectRows() {
+  const rows = [];
+  ['west','east'].forEach(area => {
+    const tbody = document.getElementById('defBody-' + area);
+    if (!tbody) return;
+    Array.from(tbody.rows).forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      if (cells.length < 5) return;
+      const getSelectVal = (td) => td ? (td.querySelector('select')?.value || td.querySelector('input')?.value || '') : '';
+      const getInputVal  = (td) => td ? (td.querySelector('input')?.value || td.querySelector('textarea')?.value || '') : '';
+      rows.push({
+        tr,
+        area:        getSelectVal(cells[1]),
+        station:     getSelectVal(cells[2]),
+        category:    getSelectVal(cells[3]),
+        criticality: getSelectVal(cells[4]),
+        tagNumber:   getInputVal(cells[5]),
+        status:      cells[11]?.querySelector('select')?.value || 'Open',
+      });
+    });
+  });
+  return rows;
+}
+
+function applyDefectFilter() {
+  const cat  = document.getElementById('filterCategory')?.value   || '';
+  const stat = document.getElementById('filterStatus')?.value      || '';
+  const crit = document.getElementById('filterCriticality')?.value || '';
+  const area = document.getElementById('filterArea')?.value        || '';
+  const showClosed = document.getElementById('showClosedDefects')?.checked;
+
+  const rows = getDefectRows();
+  let visible = 0, total = rows.length;
+
+  rows.forEach(({ tr, category, status, criticality, area: rowArea }) => {
+    const catMatch  = !cat  || category === cat;
+    const statMatch = !stat || status === stat;
+    const critMatch = !crit || criticality === crit;
+    const areaMatch = !area || rowArea === area;
+    const closedOk  = status !== 'Closed' || showClosed;
+
+    const show = catMatch && statMatch && critMatch && areaMatch && closedOk;
+    tr.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+
+  const fcEl = document.getElementById('defFilterCount');
+  const tcEl = document.getElementById('defTotalCount');
+  if (fcEl) fcEl.textContent = visible;
+  if (tcEl) tcEl.textContent = total;
+
+  drawDefectCharts(rows);
+  recalcDefectSummaryFromRows(rows);
+}
+
+function resetDefectFilter() {
+  ['filterCategory','filterStatus','filterCriticality','filterArea'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  applyDefectFilter();
+}
+
+function recalcDefectSummaryFromRows(rows) {
+  let total=rows.length, open=0, prog=0, closed=0, west=0, east=0;
+  rows.forEach(r => {
+    if (r.status==='Open') open++;
+    else if (r.status==='In Progress') prog++;
+    else if (r.status==='Closed') closed++;
+    if ((r.area||'').toLowerCase()==='west') west++;
+    else east++;
+  });
+  const s = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  s('defStatTotal', total);
+  s('defStatOpen', open);
+  s('defStatProg', prog);
+  s('defStatClosed', closed);
+  s('defBadgeWest', west);
+  s('defBadgeEast', east);
+  const badge = document.getElementById('badge-defect');
+  if (badge) badge.textContent = open + prog;
+  const fcEl = document.getElementById('defFilterCount');
+  const tcEl = document.getElementById('defTotalCount');
+  if (tcEl) tcEl.textContent = total;
+  if (fcEl) fcEl.textContent = rows.filter(r => {
+    const cat  = document.getElementById('filterCategory')?.value   || '';
+    const stat = document.getElementById('filterStatus')?.value      || '';
+    const crit = document.getElementById('filterCriticality')?.value || '';
+    const area = document.getElementById('filterArea')?.value        || '';
+    return (!cat || r.category===cat) && (!stat || r.status===stat) &&
+           (!crit || r.criticality===crit) && (!area || r.area===area);
+  }).length;
+}
+
+function drawDefectCharts(rows) {
+  drawCatChart(rows);
+  drawStatusChart(rows);
+  drawCritChart(rows);
+}
+
+function drawCatChart(rows) {
+  const canvas = document.getElementById('chartDefCat');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.clientWidth - 28;
+  canvas.width = W; canvas.height = 200;
+  ctx.clearRect(0,0,W,200);
+
+  const counts = {};
+  DEF_CATS.forEach(c => counts[c] = 0);
+  rows.forEach(r => { if (counts[r.category] !== undefined) counts[r.category]++; });
+
+  const labels = DEF_CATS.filter(c => counts[c] > 0);
+  const vals   = labels.map(c => counts[c]);
+  if (!vals.length || vals.every(v=>v===0)) {
+    ctx.fillStyle='#ccc'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Belum ada data', W/2, 100); return;
+  }
+
+  const maxV = Math.max(...vals);
+  const padL=10, padR=10, padT=10, padB=40;
+  const cW = W-padL-padR, cH = 200-padT-padB;
+  const barW = Math.min(cW/labels.length*0.65, 50);
+  const groupW = cW/labels.length;
+
+  // Grid
+  for(let i=0;i<=4;i++){
+    const y = padT+cH-(i/4)*cH;
+    ctx.strokeStyle='#f0f0f0'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.fillStyle='#aaa'; ctx.font='8px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(Math.round((i/4)*maxV), padL-2, y+3);
+  }
+
+  labels.forEach((lbl, i) => {
+    const v = vals[i];
+    const x = padL + i*groupW + (groupW-barW)/2;
+    const bH = maxV > 0 ? (v/maxV)*cH : 0;
+    const y = padT + cH - bH;
+    const color = CAT_COLORS[DEF_CATS.indexOf(lbl)] || '#888';
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, barW, bH);
+    // value on top
+    ctx.fillStyle='#333'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+    if (v > 0) ctx.fillText(v, x+barW/2, y-3);
+    // label below
+    ctx.fillStyle='#555'; ctx.font='8px sans-serif';
+    const shortLbl = lbl.length > 8 ? lbl.substring(0,7)+'…' : lbl;
+    ctx.fillText(shortLbl, x+barW/2, 200-padB+12);
+  });
+}
+
+function drawStatusChart(rows) {
+  const canvas = document.getElementById('chartDefStatus');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const S = Math.min(canvas.parentElement.clientWidth - 28, 200);
+  canvas.width = canvas.height = S;
+  ctx.clearRect(0,0,S,S);
+
+  const counts = { Open:0, 'In Progress':0, Closed:0 };
+  rows.forEach(r => { if (counts[r.status] !== undefined) counts[r.status]++; });
+  const labels = Object.keys(counts);
+  const vals   = Object.values(counts);
+  const total  = vals.reduce((a,b)=>a+b,0);
+  const colors = ['#ef5350','#ff9800','#66bb6a'];
+
+  if (!total) {
+    ctx.fillStyle='#ccc'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Belum ada data', S/2, S/2); return;
+  }
+
+  let ang = -Math.PI/2;
+  const cx=S/2, cy=S/2-10, r=S/2-28;
+  labels.forEach((lbl,i) => {
+    const v = vals[i]; if(!v) return;
+    const sl = (v/total)*Math.PI*2;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,ang,ang+sl); ctx.closePath();
+    ctx.fillStyle=colors[i]; ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+    // label inside slice if big enough
+    if (v/total > 0.08) {
+      const mid=ang+sl/2;
+      const lx=cx+Math.cos(mid)*r*0.65, ly=cy+Math.sin(mid)*r*0.65;
+      ctx.fillStyle='#fff'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(v, lx, ly+4);
+    }
+    ang += sl;
+  });
+
+  // Legend
+  const legY = S - 30;
+  labels.forEach((lbl,i) => {
+    const lx = (S/3)*i + 8;
+    ctx.fillStyle=colors[i]; ctx.fillRect(lx, legY, 10, 8);
+    ctx.fillStyle='#555'; ctx.font='7.5px sans-serif'; ctx.textAlign='left';
+    ctx.fillText(lbl + ' (' + vals[i] + ')', lx+13, legY+7);
+  });
+}
+
+function drawCritChart(rows) {
+  const canvas = document.getElementById('chartDefCrit');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.clientWidth - 28;
+  canvas.width = W; canvas.height = 200;
+  ctx.clearRect(0,0,W,200);
+
+  const crits = ['P1','P2','P3','P4'];
+  const critColors = ['#c62828','#ef5350','#ff9800','#ffc107'];
+  const counts = {}; crits.forEach(c=>counts[c]=0);
+  rows.forEach(r => { if (counts[r.criticality]!==undefined) counts[r.criticality]++; });
+
+  const maxV = Math.max(...Object.values(counts), 1);
+  const padL=22, padR=14, padT=14, padB=30;
+  const cW=W-padL-padR, cH=200-padT-padB;
+  const barW = cW/4*0.55;
+  const groupW = cW/4;
+
+  for(let i=0;i<=4;i++){
+    const y=padT+cH-(i/4)*cH;
+    ctx.strokeStyle='#f0f0f0'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.fillStyle='#aaa'; ctx.font='8px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(Math.round((i/4)*maxV), padL-2, y+3);
+  }
+
+  crits.forEach((c,i) => {
+    const v = counts[c];
+    const x = padL + i*groupW + (groupW-barW)/2;
+    const bH = (v/maxV)*cH;
+    const y  = padT+cH-bH;
+    ctx.fillStyle = critColors[i];
+    ctx.fillRect(x,y,barW,bH||0.5);
+    ctx.fillStyle='#333'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center';
+    if(v>0) ctx.fillText(v, x+barW/2, y-4);
+    ctx.fillStyle=critColors[i]; ctx.font='bold 10px sans-serif';
+    ctx.fillText(c, x+barW/2, 200-padB+13);
+  });
+}
+
+// Override recalcDefectSummary to also redraw charts
+const _origRecalcDef = recalcDefectSummary;
+function recalcDefectSummary() {
+  _origRecalcDef();
+  setTimeout(() => {
+    const rows = getDefectRows();
+    drawDefectCharts(rows);
+    const fcEl = document.getElementById('defFilterCount');
+    const tcEl = document.getElementById('defTotalCount');
+    if (tcEl) tcEl.textContent = rows.length;
+    if (fcEl) fcEl.textContent = rows.length;
+  }, 100);
+}
+
+
+/* ════════════════════════════════════════════════════
+   MCU & TRAINING MONITORING
+════════════════════════════════════════════════════ */
+let mcuRowCounter = 0;
+const MCU_CERTS = ["mcu","ss","sbtc","fa","ff","onsk","rig","lift","wah","k3l"];
+
+function getDaysUntilExp(dateStr) {
+  if (!dateStr) return null;
+  const exp  = new Date(dateStr);
+  const now  = new Date();
+  now.setHours(0,0,0,0);
+  exp.setHours(0,0,0,0);
+  return Math.round((exp - now) / 86400000);
+}
+
+function mcuCellStatus(days) {
+  if (days === null) return 'na';
+  if (days < 0)   return 'expired';
+  if (days <= 30) return 'alert';
+  return 'valid';
+}
+
+function mcuCellClass(status) {
+  return 'mcu-cell-' + (status === 'na' ? 'empty' : status);
+}
+
+function mcuBadge(days, status) {
+  if (status === 'na') return '<span class="mcu-status-badge mcu-badge-na">N/A</span>';
+  if (status === 'expired') return '<span class="mcu-status-badge mcu-badge-expired">EXPIRED</span>';
+  if (status === 'alert')   return '<span class="mcu-status-badge mcu-badge-alert">ALERT ' + days + 'hr</span>';
+  return '<span class="mcu-status-badge mcu-badge-valid">VALID ' + days + 'hr</span>';
+}
+
+function addMcuRow(data) {
+  mcuRowCounter++;
+  const tbody = document.getElementById('mcuTableBody');
+  if (!tbody) return;
+  const rowNum = tbody.rows.length + 1;
+  const rid = 'mcurow' + mcuRowCounter;
+  const d = data || {};
+
+  const tr = document.createElement('tr');
+  tr.id = rid;
+
+  let cells = '';
+  cells += '<td style="text-align:center;font-size:10px;color:var(--muted);">' + rowNum + '</td>';
+  cells += '<td><input class="mcu-input" value="' + (d.nama||'') + '" placeholder="Nama lengkap..."></td>';
+  cells += '<td><input class="mcu-input" value="' + (d.posisi||'') + '" placeholder="Posisi/Jabatan..."></td>';
+
+  MCU_CERTS.forEach(cert => {
+    const expVal = d[cert + '_exp'] || '';
+    const fu     = d[cert + '_fu']  || '';
+    const remark = d[cert + '_remark'] || '';
+    const days   = getDaysUntilExp(expVal);
+    const st     = mcuCellStatus(days);
+    const cls    = mcuCellClass(st);
+
+    // Date Exp cell
+    cells +=
+      '<td class="' + cls + '" id="' + rid + '-' + cert + '-exp-cell">' +
+        '<input type="date" class="mcu-input" id="' + rid + '-' + cert + '-exp" value="' + expVal + '"' +
+        ' onchange="updateMcuCell(\'' + rid + '\',\'' + cert + '\')">' +
+      '</td>';
+
+    // Status badge cell
+    cells +=
+      '<td class="' + cls + '" id="' + rid + '-' + cert + '-st-cell">' +
+        '<div id="' + rid + '-' + cert + '-badge">' + mcuBadge(days, st) + '</div>' +
+      '</td>';
+
+    // Follow Up — ONLY for MCU
+    if (cert === 'mcu') {
+      cells +=
+        '<td id="' + rid + '-mcu-fu-cell">' +
+          '<textarea class="mcu-input" rows="2" placeholder="Follow up MCU...">' + fu + '</textarea>' +
+        '</td>';
+    }
+
+    // Remark — for ALL certs
+    cells +=
+      '<td>' +
+        '<textarea class="mcu-input" rows="2" placeholder="Remark...">' + remark + '</textarea>' +
+      '</td>';
+  });
+
+  cells += '<td class="no-print" style="text-align:center;">' +
+    '<button class="mcu-del-btn" onclick="deleteMcuRow(\'' + rid + '\')">✕</button></td>';
+
+  tr.innerHTML = cells;
+  tbody.appendChild(tr);
+  recalcMcuStatus();
+  return rid;
+}
+
+function updateMcuCell(rid, cert) {
+  const expEl   = document.getElementById(rid + '-' + cert + '-exp');
+  const expCell = document.getElementById(rid + '-' + cert + '-exp-cell');
+  const stCell  = document.getElementById(rid + '-' + cert + '-st-cell');
+  const badge   = document.getElementById(rid + '-' + cert + '-badge');
+  if (!expEl) return;
+
+  const days = getDaysUntilExp(expEl.value);
+  const st   = mcuCellStatus(days);
+  const cls  = 'mcu-cell-' + (st === 'na' ? 'empty' : st);
+
+  if (expCell) expCell.className = cls;
+  if (stCell)  stCell.className  = cls;
+  if (badge)   badge.innerHTML   = mcuBadge(days, st);
+  recalcMcuStatus();
+}
+
+function deleteMcuRow(rid) {
+  const tr = document.getElementById(rid);
+  if (!tr) return;
+  tr.style.opacity = '0'; tr.style.transition = 'opacity .2s';
+  setTimeout(() => {
+    tr.remove();
+    document.querySelectorAll('#mcuTableBody tr').forEach((r,i) => r.cells[0].textContent = i+1);
+    recalcMcuStatus();
+  }, 200);
+}
+
+function recalcMcuStatus() {
+  const rows = document.querySelectorAll('#mcuTableBody tr');
+  let total = rows.length, allValid = 0, hasAlert = 0, hasExpired = 0;
+
+  rows.forEach(tr => {
+    let rowHasExpired = false, rowHasAlert = false, rowAllValid = true;
+    MCU_CERTS.forEach(cert => {
+      const expEl = document.getElementById(tr.id + '-' + cert + '-exp');
+      if (!expEl || !expEl.value) { rowAllValid = false; return; }
+      const days = getDaysUntilExp(expEl.value);
+      const st   = mcuCellStatus(days);
+      if (st === 'expired') { rowHasExpired = true; rowAllValid = false; }
+      else if (st === 'alert') { rowHasAlert = true; rowAllValid = false; }
+    });
+    if (rowHasExpired) hasExpired++;
+    else if (rowHasAlert) hasAlert++;
+    else if (rowAllValid) allValid++;
+  });
+
+  const s = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  s('mcuStatTotal',   total);
+  s('mcuStatValid',   allValid);
+  s('mcuStatAlert',   hasAlert);
+  s('mcuStatExpired', hasExpired);
+
+  const badge = document.getElementById('badge-mcu');
+  if (badge) badge.textContent = hasAlert + hasExpired;
+}
+
+// Redraw on tab switch
+function refreshMcuStatus() {
+  const rows = document.querySelectorAll('#mcuTableBody tr');
+  rows.forEach(tr => {
+    MCU_CERTS.forEach(cert => {
+      updateMcuCell(tr.id, cert);
+    });
+  });
+}
+
+
+
+
+/* ════════════════════════════════════════════════════
+   GOOGLE DRIVE INTEGRATION
+════════════════════════════════════════════════════ */
+const GDRIVE_CLIENT_ID  = '350323062926-l26407hclfj4fl2so2u0qtbi4k9s96js.apps.googleusercontent.com';
+const GDRIVE_SCOPE      = 'https://www.googleapis.com/auth/drive.file';
+const GDRIVE_FOLDER     = 'Weekly Report Indokomas'; // folder name in Drive
+
+let gdriveToken = null;
+let gdriveFolderId = null;
+
+function showDriveStatus(msg, color) {
+  const el = document.getElementById('gdriveStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = color || '#2f7a4f';
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = 'none'; }, 5000);
+}
+
+/* ── Step 1: Login with Google ── */
+function loginGoogle() {
+  return new Promise((resolve, reject) => {
+    if (gdriveToken) { resolve(gdriveToken); return; }
+
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: GDRIVE_CLIENT_ID,
+      scope: GDRIVE_SCOPE,
+      callback: (resp) => {
+        if (resp.error) { reject(resp.error); return; }
+        gdriveToken = resp.access_token;
+        resolve(gdriveToken);
+      },
+    });
+    client.requestAccessToken();
+  });
+}
+
+/* ── Step 2: Find or create folder ── */
+async function getOrCreateFolder(token) {
+  // Search for existing folder
+  const q = encodeURIComponent(`name='${GDRIVE_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`, {
+    headers: { Authorization: 'Bearer ' + token }
+  });
+  const data = await res.json();
+  if (data.files && data.files.length > 0) {
+    return data.files[0].id;
+  }
+  // Create folder
+  const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: GDRIVE_FOLDER, mimeType: 'application/vnd.google-apps.folder' })
+  });
+  const folder = await createRes.json();
+  return folder.id;
+}
+
+/* ── Step 3: Search existing file in folder ── */
+async function findExistingFile(token, folderId, fileName) {
+  const q = encodeURIComponent(`name='${fileName}' and '${folderId}' in parents and trashed=false`);
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`, {
+    headers: { Authorization: 'Bearer ' + token }
+  });
+  const data = await res.json();
+  return data.files && data.files.length > 0 ? data.files[0].id : null;
+}
+
+/* ── Step 4: Upload or Update file ── */
+async function uploadToDrive(token, folderId, fileName, htmlBlob, existingId) {
+  const metadata = { name: fileName, mimeType: 'text/html', parents: existingId ? undefined : [folderId] };
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+  form.append('file', htmlBlob);
+
+  const url = existingId
+    ? `https://www.googleapis.com/upload/drive/v3/files/${existingId}?uploadType=multipart`
+    : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+
+  const res = await fetch(url, {
+    method: existingId ? 'PATCH' : 'POST',
+    headers: { Authorization: 'Bearer ' + token },
+    body: form
+  });
+  return await res.json();
+}
+
+/* ── Main: Save to Google Drive ── */
+async function saveToGoogleDrive() {
+  const btn = document.getElementById('gdriveBtn');
+  try {
+    if (btn) { btn.textContent = '⏳ Menyambung...'; btn.disabled = true; }
+    showDriveStatus('Menghubungkan ke Google...', '#1565c0');
+
+    // 1. Login
+    const token = await loginGoogle();
+    showDriveStatus('Menyiapkan file...', '#1565c0');
+
+    // 2. Build HTML blob (same as saveHTML)
+    const clone = document.documentElement.cloneNode(true);
+    const origInputs = document.querySelectorAll('input');
+    const cloneInputs = clone.querySelectorAll('input');
+    origInputs.forEach((el, i) => {
+      if (!cloneInputs[i] || el.type === 'file') return;
+      cloneInputs[i].setAttribute('value', el.value);
+    });
+    const origTAs = document.querySelectorAll('textarea');
+    const cloneTAs = clone.querySelectorAll('textarea');
+    origTAs.forEach((el, i) => { if (cloneTAs[i]) cloneTAs[i].textContent = el.value; });
+    const origSels = document.querySelectorAll('select');
+    const cloneSels = clone.querySelectorAll('select');
+    origSels.forEach((sel, i) => {
+      if (!cloneSels[i]) return;
+      cloneSels[i].querySelectorAll('option').forEach(opt => {
+        if (opt.value === sel.value) opt.setAttribute('selected','selected');
+        else opt.removeAttribute('selected');
+      });
+    });
+    const htmlBlob = new Blob(['<!DOCTYPE html>\n' + clone.outerHTML], { type: 'text/html' });
+
+    // 3. Get/create folder
+    showDriveStatus('Memeriksa folder Drive...', '#1565c0');
+    const folderId = await getOrCreateFolder(token);
+
+    // 4. Filename: weekly_report_YYYYMMDD.html
+    const now = new Date();
+    const ts = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
+    const fileName = 'weekly_report_indokomas_' + ts + '.html';
+
+    // 5. Check if file exists → update or create
+    showDriveStatus('Mengupload ke Drive...', '#1565c0');
+    const existingId = await findExistingFile(token, folderId, fileName);
+    const result = await uploadToDrive(token, folderId, fileName, htmlBlob, existingId);
+
+    if (result.id) {
+      showDriveStatus('✓ Tersimpan di Drive: ' + GDRIVE_FOLDER + '/' + fileName, '#2f7a4f');
+      if (btn) { btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.2 48.5c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75L86.1 57c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 52.5H27.5L13.75 76.3c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.5h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg> ✓ Tersimpan'; }
+      setTimeout(() => {
+        if (btn) { btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.2 48.5c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75L86.1 57c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 52.5H27.5L13.75 76.3c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.5h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg> Simpan ke Drive'; btn.disabled = false; }
+      }, 3000);
+    } else {
+      throw new Error('Upload gagal: ' + JSON.stringify(result));
+    }
+  } catch(err) {
+    showDriveStatus('✗ ' + err.message, '#c62828');
+    if (btn) { btn.textContent = 'Simpan ke Drive'; btn.disabled = false; }
+    console.error('Drive error:', err);
+  }
+}
+
+</script>
+</body>
+</html>
